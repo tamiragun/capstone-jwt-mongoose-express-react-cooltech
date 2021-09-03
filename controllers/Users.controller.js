@@ -4,7 +4,7 @@ let User = require("../models/Users.model");
 
 // Create and save a new user:
 
-exports.addUser = async function (req, res) {
+exports.addUser = async function (req, res, next) {
   // Use the request body info to create a new document
   let userSchema = new User({
     name: req.body.name,
@@ -16,15 +16,16 @@ exports.addUser = async function (req, res) {
 
   // Try adding the document to the collection
   try {
-    await userSchema.save(function (err, data) {
+    await userSchema.save(function (err, user) {
       if (err) {
         console.log(err);
         res
           .status(500)
           .send({ message: "Some error occurred while creating the user." });
       } else {
-        console.log(data);
-        res.send("The user has been added.");
+        console.log(user);
+        req.user = user;
+        next();
       }
     });
   } catch (error) {

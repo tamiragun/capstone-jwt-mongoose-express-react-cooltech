@@ -33,6 +33,9 @@ app.use("/users", userRouter);
 const loginRouter = require("./routes/login");
 app.use("/login", loginRouter);
 
+const registerRouter = require("./routes/register");
+app.use("/register", registerRouter);
+
 // All the API endpoints, which correspond to a controller function each
 //app.get("/display", JobControllers.listAllJobs);
 //app.post("/add", JobControllers.addNewJob);

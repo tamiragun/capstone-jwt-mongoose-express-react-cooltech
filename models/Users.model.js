@@ -16,7 +16,7 @@ let userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  OU: {
+  org_unit: {
     type: Array,
     required: true,
   },

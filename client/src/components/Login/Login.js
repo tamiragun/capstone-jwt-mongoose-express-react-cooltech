@@ -28,7 +28,7 @@ export const Login = (props) => {
     event.preventDefault();
 
     // Call the server with the different states as arguments.
-    const url = "http://localhost:3001/login";
+    const url = "/login";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-type": "application/json" },
@@ -42,8 +42,8 @@ export const Login = (props) => {
     }
     if (jsonResponse.token) {
       //store jwt and user info in sessionStrorage
-      sessionStorage.setItem("user", JSON.stringify(jsonResponse));
-      console.log("Success", jsonResponse.token);
+      sessionStorage.setItem("token", jsonResponse.token);
+      console.log(sessionStorage.getItem("token"));
       // Reset the states back to empty, so that the form looks blank again.
       setEmail("");
       setPassword("");
