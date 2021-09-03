@@ -55,7 +55,7 @@ exports.listAllUsers = async function (req, res) {
   }
 };
 
-// Find a signle users:
+// Find a single user:
 
 exports.findUser = async function (req, res, next) {
   const filter = { email: req.body.email };

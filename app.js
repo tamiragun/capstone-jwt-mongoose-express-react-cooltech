@@ -30,11 +30,8 @@ app.use((req, res, next) => {
 const userRouter = require("./routes/users");
 app.use("/users", userRouter);
 
-const loginRouter = require("./routes/login");
-app.use("/login", loginRouter);
-
-const registerRouter = require("./routes/register");
-app.use("/register", registerRouter);
+const authRouter = require("./routes/authentication");
+app.use("/authentication", authRouter);
 
 // All the API endpoints, which correspond to a controller function each
 //app.get("/display", JobControllers.listAllJobs);

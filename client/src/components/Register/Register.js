@@ -37,7 +37,7 @@ export const Register = (props) => {
     event.preventDefault();
 
     // Call the server with the different states as arguments.
-    const url = "/register";
+    const url = "/authentication/register";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-type": "application/json" },

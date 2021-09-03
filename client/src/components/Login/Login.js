@@ -28,7 +28,7 @@ export const Login = (props) => {
     event.preventDefault();
 
     // Call the server with the different states as arguments.
-    const url = "/login";
+    const url = "/authentication/login";
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-type": "application/json" },
