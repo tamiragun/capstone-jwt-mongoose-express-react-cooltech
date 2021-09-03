@@ -58,11 +58,16 @@ exports.listAllUsers = async function (req, res) {
 // Find a single user:
 
 exports.findUser = async function (req, res, next) {
-  const filter = { email: req.body.email };
+  let filter = {};
+  if (req.body.email) {
+    filter = { email: req.body.email };
+  } else if (req.body._id) {
+    filter = { _id: req.body._id };
+  }
+
   try {
     await User.findOne(filter).exec(function (err, user) {
-      if (err) {
-        console.log(err);
+      if (err || user === null) {
         res.status(500).send({ message: "User not found" });
       } else {
         req.user = user;

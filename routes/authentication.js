@@ -10,9 +10,6 @@ router.post("/login", userControllers.findUser, (req, res) => {
   const password = req.body.password;
   const user = req.user;
 
-  if (user === null) {
-    res.status(500).send({ message: "User not found" });
-  }
   if (password === user.password) {
     payload = {
       name: user.name,
