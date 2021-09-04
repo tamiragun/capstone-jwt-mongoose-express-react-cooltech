@@ -33,11 +33,8 @@ app.use("/users", userRouter);
 const authRouter = require("./routes/authentication");
 app.use("/authentication", authRouter);
 
-// All the API endpoints, which correspond to a controller function each
-//app.get("/display", JobControllers.listAllJobs);
-//app.post("/add", JobControllers.addNewJob);
-//app.patch("/update", JobControllers.updateJob);
-//app.patch("/bulkupdate", JobControllers.updateStatus);
+const credentialsRouter = require("./routes/credentials");
+app.use("/credentials", credentialsRouter);
 
 // Connecting the app to the database using hidden keys
 const uri = `mongodb+srv://${process.env.ATLAS_LOGIN}:${process.env.ATLAS_PASSWORD}@hyperiondev.v2pxn.mongodb.net/cool-tech`;
