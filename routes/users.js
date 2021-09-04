@@ -16,4 +16,18 @@ router.post(
   }
 );
 
+router.post(
+  "/assign",
+  auth.authenticateAdmin,
+  userControllers.findUser,
+  userControllers.assignUser
+);
+
+router.post(
+  "/unassign",
+  auth.authenticateAdmin,
+  userControllers.findUser,
+  userControllers.unAssignUser
+);
+
 module.exports = router;

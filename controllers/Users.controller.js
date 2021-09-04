@@ -18,18 +18,19 @@ exports.addUser = async function (req, res, next) {
   try {
     await userSchema.save(function (err, user) {
       if (err) {
+        console.log("Error creating the user");
         console.log(err);
         res
           .status(500)
           .send({ message: "Some error occurred while creating the user." });
       } else {
-        console.log(user);
+        console.log("Successfully added user: ", user.name);
         req.user = user;
         next();
       }
     });
   } catch (error) {
-    console.log(error);
+    console.log("CATCH ERROR:", error);
   }
 };
 
@@ -42,16 +43,18 @@ exports.listAllUsers = async function (req, res) {
       .sort("-created")
       .exec(function (err, users) {
         if (err) {
+          console.log("Error listing all users");
           console.log(err);
           res
             .status(500)
             .send({ message: "Some error occurred while retrieving users" });
         } else {
+          console.log("Successfully displaying all users");
           res.send(users);
         }
       });
   } catch (error) {
-    console.log(error);
+    console.log("CATCH ERROR:", error);
   }
 };
 
@@ -68,53 +71,141 @@ exports.findUser = async function (req, res, next) {
   try {
     await User.findOne(filter).exec(function (err, user) {
       if (err || user === null) {
+        console.log("User not found");
         res.status(500).send({ message: "User not found" });
       } else {
         req.user = user;
+        console.log("successfully found user: ", user.name);
         next();
       }
     });
   } catch (error) {
-    console.log(error);
+    console.log("CATCH ERROR:", error);
   }
 };
 
-// Update a single user (role or division or OU):
+// Assign a role or division or OU to a user:
 
-exports.updateUser = async function (req, res) {
+exports.assignUser = async function (req, res) {
   const requestedfields = req.body;
-  let filter = {};
   let fieldsToUpdate = {};
-  // Loop through the keys in the request object
+
   for (const key in requestedfields) {
-    if (Object.hasOwnProperty.call(requestedfields, key)) {
-      const element = requestedfields[key];
-      // Add the "_id" key to the filter object. This is how we'll tell the
-      // database how to find the right record.
-      if (key === "_id") {
-        filter[key] = element;
-        // And add the remaining keys to the fieldsToUpdate object. This is how
-        // we'll tell the database what fields to update.
+    const element = requestedfields[key];
+    if (key === "org_unit") {
+      if (req.user.org_unit.includes(element)) {
+        console.log("User already in this org_unit");
+        res.status(405).send({
+          message: "User is already associated with this organisational unit",
+        });
       } else {
-        fieldsToUpdate[key] = element;
+        req.user.org_unit.push(element);
+        fieldsToUpdate.org_unit = req.user.org_unit;
+      }
+    } else if (key === "division") {
+      if (req.user.division.includes(element)) {
+        console.log("User already in this division");
+        res.status(405).send({
+          message: "User is already associated with this division",
+        });
+      } else {
+        req.user.division.push(element);
+        fieldsToUpdate.division = req.user.division;
+      }
+    } else if (key === "role") {
+      if (req.user.role === element) {
+        console.log("User already has this role");
+        res.status(405).send({
+          message: "User already has this role",
+        });
+      } else {
+        fieldsToUpdate.role = element;
       }
     }
   }
 
-  // Now try to find the record and update it based on the objects created above
+  if (Object.keys(fieldsToUpdate).length === 0) {
+    console.log("There are no fields to update");
+    res.status(405).send({
+      message: "Please indicate what to assign",
+    });
+  }
+
   try {
     await User.findOneAndUpdate(
-      filter,
+      { _id: requestedfields._id },
       fieldsToUpdate,
       { new: true },
-      function (err, doc) {
+      function (err, user) {
         if (err) {
           console.log("Something went wrong when updating the user.");
         }
-        res.send("Updated");
+        console.log("Updated user successfully: ", user.name);
+        res.send("Updated user successfully");
       }
     );
   } catch (error) {
-    console.log(error);
+    console.log("CATCH ERROR:", error);
+  }
+};
+
+// Unassign a division or OU to a user:
+
+exports.unAssignUser = async function (req, res) {
+  const requestedfields = req.body;
+  let fieldsToUpdate = {};
+
+  for (const key in requestedfields) {
+    const element = requestedfields[key];
+    if (key === "org_unit") {
+      if (req.user.org_unit.includes(element)) {
+        const newOrgUnits = req.user.org_unit.filter(
+          (unit) => unit !== element
+        );
+        fieldsToUpdate.org_unit = newOrgUnits;
+        console.log(newOrgUnits);
+      } else {
+        console.log("User is not associated with this organisational unit");
+        res.status(404).send({
+          message: "User is not associated with this organisational unit",
+        });
+      }
+    } else if (key === "division") {
+      if (req.user.division.includes(element)) {
+        const newDivisions = req.user.division.filter(
+          (unit) => unit !== element
+        );
+        fieldsToUpdate.division = newDivisions;
+      } else {
+        console.log("User is not associated with this division");
+        res.status(404).send({
+          message: "User is not associated with this division",
+        });
+      }
+    }
+  }
+
+  if (Object.keys(fieldsToUpdate).length === 0) {
+    console.log("There is nothing to unassign");
+    res.status(405).send({
+      message: "Please indicate what to unassign",
+    });
+  }
+
+  try {
+    await User.findOneAndUpdate(
+      { _id: requestedfields._id },
+      fieldsToUpdate,
+      { new: true },
+      function (err, user) {
+        if (err) {
+          console.log("Something went wrong when updating the user.");
+        }
+        console.log("Updated user successfully: ", user.name);
+        res.send("Updated user successfully");
+      }
+    );
+  } catch (error) {
+    console.log("CATCH ERROR:", error);
   }
 };
