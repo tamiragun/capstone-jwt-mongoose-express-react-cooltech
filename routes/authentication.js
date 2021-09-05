@@ -13,7 +13,7 @@ router.post("/login", userControllers.findUser, (req, res) => {
   if (password === user.password) {
     payload = {
       name: user.name,
-      OU: user.OU,
+      org_unit: user.org_unit,
       division: user.division,
       role: user.role,
     };
@@ -34,7 +34,7 @@ router.post("/register", userControllers.addUser, (req, res) => {
   const user = req.user;
   payload = {
     name: user.name,
-    OU: user.OU,
+    org_unit: user.org_unit,
     division: user.division,
     role: user.role,
   };

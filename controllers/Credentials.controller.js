@@ -42,7 +42,6 @@ exports.listAllCredentials = async function (req, res) {
   const filter = { org_unit: req.body.org_unit, division: req.body.division };
   try {
     await Credential.find(filter)
-      // Sort by created date
       .sort("-created")
       .exec(function (err, credentials) {
         if (err) {
@@ -53,6 +52,7 @@ exports.listAllCredentials = async function (req, res) {
           });
         } else {
           console.log("Successfully displaying credentials");
+
           res.send(credentials);
         }
       });

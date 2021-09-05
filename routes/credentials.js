@@ -8,6 +8,22 @@ const auth = require("../middleware/authenticationMiddleware");
 router.post(
   "/",
   auth.authenticateNormal,
+  (req, res, next) => {
+    if (
+      req.org_unit.includes(req.body.org_unit) &&
+      req.division.includes(req.body.division)
+    ) {
+      console.log(
+        "Successfully verified that user is in this org_unit and division"
+      );
+      next();
+    } else {
+      console.log("User does not belong to this org_unit or division");
+      res.status(403).send({
+        message: "You do not have permission to view these credentials",
+      });
+    }
+  },
   credentialControllers.listAllCredentials
 );
 
@@ -37,5 +53,13 @@ router.post(
   auth.authenticateManager,
   credentialControllers.addCredential
 );
+
+// Endpoint to check if credentials may be edited:
+
+router.post("/updatePermission", auth.authenticateManager, (req, res) => {
+  if (req.role === "manager" || req.role === "admin")
+    console.log("Successfully granted permission to edit credential");
+  res.send({ access: true });
+});
 
 module.exports = router;

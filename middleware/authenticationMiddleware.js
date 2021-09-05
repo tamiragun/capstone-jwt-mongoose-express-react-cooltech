@@ -18,7 +18,9 @@ exports.authenticateNormal = async function (req, res, next) {
       decoded.role === "manager" ||
       decoded.role === "admin"
     ) {
-      console.log("verified role: ", decoded.role);
+      console.log("Successfully verified role: ", decoded.role);
+      req.org_unit = decoded.org_unit;
+      req.division = decoded.division;
       next();
     } else {
       console.log("You do not have access to this resource.");
@@ -44,7 +46,8 @@ exports.authenticateManager = async function (req, res, next) {
   try {
     const decoded = jwt.verify(token, "jwt-secret");
     if (decoded.role === "manager" || decoded.role === "admin") {
-      console.log("verified role: ", decoded.role);
+      console.log("Successfully verified role: ", decoded.role);
+      req.role = decoded.role;
       next();
     } else {
       console.log("You do not have access to this resource.");
@@ -70,7 +73,8 @@ exports.authenticateAdmin = async function (req, res, next) {
   try {
     const decoded = jwt.verify(token, "jwt-secret");
     if (decoded.role === "admin") {
-      console.log("verified role: ", decoded.role);
+      console.log("Successfully verified role: ", decoded.role);
+      req.role = decoded.role;
       next();
     } else {
       console.log("You do not have access to this resource.");

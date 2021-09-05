@@ -4,6 +4,7 @@ import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
 import { AllUsers } from "./components/AllUsers/AllUsers";
 import { EditUser } from "./components/EditUser/EditUser";
+import { AllCredentials } from "./components/AllCredentials/AllCredentials";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
             </Route>
             <Route path="/users">
               <AllUsers />
+            </Route>
+            <Route path="/credentials">
+              <AllCredentials org_unit="News management" division="Marketing" />
             </Route>
           </Switch>
         </Router>

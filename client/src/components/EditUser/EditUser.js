@@ -1,11 +1,11 @@
 // Component that renders a single user, with options to edit fields
 
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 
 export const EditUser = (props) => {
   // Use history to be able to link to other Routes.
-  const history = useHistory();
+  //const history = useHistory();
   const [user, setUser] = useState();
   // Declare states purely to control the form elements.
   const [org_unit, setOrg_unit] = useState();
@@ -65,7 +65,7 @@ export const EditUser = (props) => {
     } else if (event.target.name === "role") {
       requestedFields.role = role;
     }
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -92,7 +92,7 @@ export const EditUser = (props) => {
     } else if (event.target.name === "division") {
       requestedFields.division = event.target.value;
     }
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
