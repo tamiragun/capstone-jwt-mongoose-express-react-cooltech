@@ -38,7 +38,11 @@ exports.addCredential = async function (req, res) {
 // Display all credentials:
 
 exports.listAllCredentials = async function (req, res) {
-  const filter = { org_unit: req.body.org_unit, division: req.body.division };
+  const filter = {
+    org_unit: req.body.affiliation.org_unit,
+    division: req.body.affiliation.division,
+  };
+  //console.log(filter);
   try {
     await Credential.find(filter)
       .sort("-created")
@@ -50,8 +54,10 @@ exports.listAllCredentials = async function (req, res) {
             message: "Some error occurred while retrieving credentials",
           });
         } else {
-          console.log("Successfully displaying credentials");
-
+          console.log(
+            `Successfully displaying ${credentials.length} credentials`
+          );
+          //console.log(credentials);
           res.send(credentials);
         }
       });

@@ -45,8 +45,9 @@ export const Register = (props) => {
         name: name,
         email: email,
         password: password,
-        org_unit: org_unit,
-        division: division,
+        // org_unit: org_unit,
+        // division: division,
+        affiliation: { org_unit: org_unit, division: division },
       }),
     });
     const jsonResponse = await response.json();

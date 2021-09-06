@@ -1,11 +1,15 @@
 // Component that renders a single user, with options to edit fields
 
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 export const EditUser = (props) => {
   // Use history to be able to link to other Routes.
   const history = useHistory();
+  const location = useLocation();
+  const { _id } = location.state || {
+    _id: {},
+  };
   const [user, setUser] = useState();
   const [submitted, setSubmitted] = useState(false);
   // Declare states purely to control the form elements.
@@ -37,7 +41,7 @@ export const EditUser = (props) => {
           "Content-type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ _id: props.id }),
+        body: JSON.stringify({ _id: _id }),
       });
       const jsonResponse = await response.json();
       setUser(jsonResponse);
@@ -58,11 +62,9 @@ export const EditUser = (props) => {
     // Call the server with the id as argument.
     const url = "/users/assign";
     const token = sessionStorage.getItem("token");
-    let requestedFields = { _id: props.id };
-    if (event.target.name === "org_unit") {
-      requestedFields.org_unit = org_unit;
-    } else if (event.target.name === "division") {
-      requestedFields.division = division;
+    let requestedFields = { _id: _id };
+    if (event.target.name === "affiliation") {
+      requestedFields.affiliation = { org_unit: org_unit, division: division };
     } else if (event.target.name === "role") {
       requestedFields.role = role;
     }
@@ -88,12 +90,11 @@ export const EditUser = (props) => {
     // Call the server with the id as argument.
     const url = "/users/unassign";
     const token = sessionStorage.getItem("token");
-    let requestedFields = { _id: props.id };
-    if (event.target.name === "org_unit") {
-      requestedFields.org_unit = event.target.value;
-    } else if (event.target.name === "division") {
-      requestedFields.division = event.target.value;
-    }
+    let requestedFields = {
+      _id: _id,
+      affiliation: { org_unit: org_unit, division: division },
+    };
+
     await fetch(url, {
       method: "POST",
       headers: {
@@ -107,25 +108,41 @@ export const EditUser = (props) => {
     //getUser();
   };
 
-  const org_units =
+  // const org_units =
+  //   user &&
+  //   user.org_unit.map((org_unit, i) => {
+  //     return (
+  //       <li key={"org_unit_" + i}>
+  //         {org_unit}
+  //         <button name="org_unit" value={org_unit} onClick={handleUnassign}>
+  //           Unassign
+  //         </button>
+  //       </li>
+  //     );
+  //   });
+  // const divisions =
+  //   user &&
+  //   user.division.map((division, i) => {
+  //     return (
+  //       <li key={"org_unit_" + i}>
+  //         {division}
+  //         <button name="division" value={division} onClick={handleUnassign}>
+  //           Unassign
+  //         </button>
+  //       </li>
+  //     );
+  //   });
+  const affiliations =
     user &&
-    user.org_unit.map((org_unit, i) => {
+    user.affiliation.map((affiliation, i) => {
       return (
-        <li key={"org_unit_" + i}>
-          {org_unit}
-          <button name="org_unit" value={org_unit} onClick={handleUnassign}>
-            Unassign
-          </button>
-        </li>
-      );
-    });
-  const divisions =
-    user &&
-    user.division.map((division, i) => {
-      return (
-        <li key={"org_unit_" + i}>
-          {division}
-          <button name="division" value={division} onClick={handleUnassign}>
+        <li key={"affiliation_" + i}>
+          {`${affiliation.org_unit}, ${affiliation.division}`}
+          <button
+            name="affiliation"
+            value={affiliation}
+            onClick={handleUnassign}
+          >
             Unassign
           </button>
         </li>
@@ -139,6 +156,7 @@ export const EditUser = (props) => {
           "Loading..."
         ) : (
           <div>
+            <h2>Edit user: {user.name}</h2>
             <p>Name: {user.name}</p>
             <p>Email: {user.email}</p>
             <p>Role: {user.role}</p>
@@ -153,7 +171,7 @@ export const EditUser = (props) => {
               </select>
               <input type="submit" value="Change role"></input>
             </form>
-            <p>
+            {/* <p>
               Organizational unit: <ul>{org_units}</ul>
             </p>
             <form name="org_unit" onSubmit={handleAssign}>
@@ -190,6 +208,38 @@ export const EditUser = (props) => {
               ></input>
 
               <input type="submit" value="Assign"></input>
+            </form> */}
+            <p>
+              Affiliation: <ul>{affiliations}</ul>
+            </p>
+            <form name="affiliation" onSubmit={handleAssign}>
+              <label htmlFor="org_unit">Assign new organisational unit:</label>
+
+              <select
+                id="org_unit"
+                name="org_unit"
+                onChange={handleChange}
+                required
+              >
+                <option value="">Please select</option>
+                <option value="News management">News management</option>
+                <option value="Software reviews">Software reviews</option>
+                <option value="Hardware reviews">Hardware reviews</option>
+                <option value="Opinion publishing">Opinion publishing</option>
+              </select>
+              <br></br>
+              <label htmlFor="division">Assign new division:</label>
+
+              <input
+                type="text"
+                id="division"
+                name="division"
+                value={division}
+                onChange={handleChange}
+                required
+              ></input>
+              <br></br>
+              <input type="submit" value="Assign"></input>
             </form>
           </div>
         ))}
@@ -197,9 +247,10 @@ export const EditUser = (props) => {
         <div>
           <h2>You succesfully updated the user.</h2>
           <button onClick={() => setSubmitted(false)}>Keep editing</button>
-          <button onClick={() => history.push("/")}>Home</button>
         </div>
       )}
+      <button onClick={() => history.push("/users")}>Back to all users</button>
+      <button onClick={() => history.push("/")}>Home</button>
     </div>
   );
 };

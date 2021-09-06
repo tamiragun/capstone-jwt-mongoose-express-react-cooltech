@@ -16,14 +16,19 @@ let userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  org_unit: {
+  affiliation: {
     type: Array,
     required: true,
+    default: [],
   },
-  division: {
-    type: Array,
-    required: true,
-  },
+  // org_unit: {
+  //   type: Array,
+  //   required: true,
+  // },
+  // division: {
+  //   type: Array,
+  //   required: true,
+  // },
   role: {
     type: String,
     required: false,

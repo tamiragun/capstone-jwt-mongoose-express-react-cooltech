@@ -9,10 +9,13 @@ router.post(
   "/",
   auth.authenticateNormal,
   (req, res, next) => {
-    if (
-      req.org_unit.includes(req.body.org_unit) &&
-      req.division.includes(req.body.division)
-    ) {
+    const checkAffiliation = req.affiliation.filter((element) => {
+      if (JSON.stringify(element) === JSON.stringify(req.body.affiliation)) {
+        return element;
+      }
+    });
+
+    if (checkAffiliation.length > 0) {
       console.log(
         "Successfully verified that user is in this org_unit and division"
       );

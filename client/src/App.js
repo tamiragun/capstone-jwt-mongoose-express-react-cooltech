@@ -22,16 +22,13 @@ function App() {
               <Register />
             </Route>
             <Route path="/users/edit">
-              <EditUser id="6131cdaa9c61d2203abae9b2" />
+              <EditUser />
             </Route>
             <Route path="/users">
               <AllUsers />
             </Route>
-            <Route path="/credentials/edit">
-              <EditCredential id="61339be91ad2b41debf23ba8" />
-            </Route>
             <Route path="/credentials/add">
-              <AddCredential id="61339be91ad2b41debf23ba8" />
+              <AddCredential />
             </Route>
             <Route path="/credentials">
               <AllCredentials org_unit="News management" division="Marketing" />

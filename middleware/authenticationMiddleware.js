@@ -13,22 +13,24 @@ exports.authenticateNormal = async function (req, res, next) {
   const token = auth.split(" ")[1];
   try {
     const decoded = jwt.verify(token, "jwt-secret");
-    //console.log(decoded.role);
+    //console.log(decoded.affiliation);
     if (
       decoded.role === "normal" ||
       decoded.role === "manager" ||
       decoded.role === "admin"
     ) {
       console.log("Successfully verified role: ", decoded.role);
-      req.org_unit = decoded.org_unit;
-      req.division = decoded.division;
+      // req.org_unit = decoded.org_unit;
+      // req.division = decoded.division;
+      req.affiliation = decoded.affiliation;
+      //console.log(req.affiliation);
       next();
     } else {
       console.log("You do not have access to this resource.");
       res.status(403).send({ msg: "You do not have access to this resource." });
     }
   } catch (err) {
-    console.log("Bad JWT!");
+    console.log("CATCH ERR: Bad JWT!", err);
     res.status(401).send({ err: "Bad JWT!" });
   }
 };

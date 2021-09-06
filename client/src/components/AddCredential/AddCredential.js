@@ -2,12 +2,16 @@
 
 import React, { useState } from "react";
 import { CredentialForm } from "../CredentialForm/CredentialForm";
-import { useHistory } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 
 export const AddCredential = (props) => {
   const [submitted, setSubmitted] = useState(false);
   // Use history to be able to link to other Routes.
   const history = useHistory();
+  const location = useLocation();
+  const { credentialsToDisplay } = location.state || {
+    credentialsToDisplay: {},
+  };
 
   // Handler for when the form is submitted
 
@@ -40,15 +44,21 @@ export const AddCredential = (props) => {
     <div>
       {!submitted && (
         <div className="credential-edit-form">
+          <h2>Add new credential</h2>
           <CredentialForm type="add" formHandler={handleSubmit} />
         </div>
       )}
       {submitted && (
         <div>
           <h2>Your credential was submitted successfully.</h2>
-          <button onClick={() => history.push("/")}>Home</button>
         </div>
       )}
+      <button
+        onClick={() => history.push("/credentials", { credentialsToDisplay })}
+      >
+        Back to credentials
+      </button>
+      <button onClick={() => history.push("/")}>Home</button>
     </div>
   );
 };

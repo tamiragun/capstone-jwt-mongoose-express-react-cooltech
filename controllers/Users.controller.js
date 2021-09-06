@@ -10,8 +10,9 @@ exports.addUser = async function (req, res, next) {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    org_unit: req.body.org_unit,
-    division: req.body.division,
+    affiliation: req.body.affiliation,
+    // org_unit: req.body.org_unit,
+    // division: req.body.division,
   });
 
   // Try adding the document to the collection
@@ -92,25 +93,36 @@ exports.assignUser = async function (req, res) {
 
   for (const key in requestedfields) {
     const element = requestedfields[key];
-    if (key === "org_unit") {
-      if (req.user.org_unit.includes(element)) {
-        console.log("User already in this org_unit");
+    // if (key === "org_unit") {
+    //   if (req.user.org_unit.includes(element)) {
+    //     console.log("User already in this org_unit");
+    //     res.status(405).send({
+    //       message: "User is already associated with this organisational unit",
+    //     });
+    //   } else {
+    //     req.user.org_unit.push(element);
+    //     fieldsToUpdate.org_unit = req.user.org_unit;
+    //   }
+    // } else if (key === "division") {
+    //   if (req.user.division.includes(element)) {
+    //     console.log("User already in this division");
+    //     res.status(405).send({
+    //       message: "User is already associated with this division",
+    //     });
+    //   } else {
+    //     req.user.division.push(element);
+    //     fieldsToUpdate.division = req.user.division;
+    //   }
+    if (key === "affiliation") {
+      if (req.user.affiliation.includes(element)) {
+        console.log("User already affiliated with this org_unit and division");
         res.status(405).send({
-          message: "User is already associated with this organisational unit",
+          message:
+            "User is already associated with this organisational unit and division",
         });
       } else {
-        req.user.org_unit.push(element);
-        fieldsToUpdate.org_unit = req.user.org_unit;
-      }
-    } else if (key === "division") {
-      if (req.user.division.includes(element)) {
-        console.log("User already in this division");
-        res.status(405).send({
-          message: "User is already associated with this division",
-        });
-      } else {
-        req.user.division.push(element);
-        fieldsToUpdate.division = req.user.division;
+        req.user.affiliation.push(element);
+        fieldsToUpdate.affiliation = req.user.affiliation;
       }
     } else if (key === "role") {
       if (req.user.role === element) {
@@ -157,29 +169,43 @@ exports.unAssignUser = async function (req, res) {
 
   for (const key in requestedfields) {
     const element = requestedfields[key];
-    if (key === "org_unit") {
-      if (req.user.org_unit.includes(element)) {
-        const newOrgUnits = req.user.org_unit.filter(
+    //   if (key === "org_unit") {
+    //     if (req.user.org_unit.includes(element)) {
+    //       const newOrgUnits = req.user.org_unit.filter(
+    //         (unit) => unit !== element
+    //       );
+    //       fieldsToUpdate.org_unit = newOrgUnits;
+    //       console.log(newOrgUnits);
+    //     } else {
+    //       console.log("User is not associated with this organisational unit");
+    //       res.status(404).send({
+    //         message: "User is not associated with this organisational unit",
+    //       });
+    //     }
+    //   } else if (key === "division") {
+    //     if (req.user.division.includes(element)) {
+    //       const newDivisions = req.user.division.filter(
+    //         (unit) => unit !== element
+    //       );
+    //       fieldsToUpdate.division = newDivisions;
+    //     } else {
+    //       console.log("User is not associated with this division");
+    //       res.status(404).send({
+    //         message: "User is not associated with this division",
+    //       });
+    //     }
+    //   }
+    if (key === "affiliation") {
+      if (req.user.affiliation.includes(element)) {
+        const newOrgUnits = req.user.affiliation.filter(
           (unit) => unit !== element
         );
-        fieldsToUpdate.org_unit = newOrgUnits;
+        fieldsToUpdate.affiliation = newOrgUnits;
         console.log(newOrgUnits);
       } else {
         console.log("User is not associated with this organisational unit");
         res.status(404).send({
           message: "User is not associated with this organisational unit",
-        });
-      }
-    } else if (key === "division") {
-      if (req.user.division.includes(element)) {
-        const newDivisions = req.user.division.filter(
-          (unit) => unit !== element
-        );
-        fieldsToUpdate.division = newDivisions;
-      } else {
-        console.log("User is not associated with this division");
-        res.status(404).send({
-          message: "User is not associated with this division",
         });
       }
     }

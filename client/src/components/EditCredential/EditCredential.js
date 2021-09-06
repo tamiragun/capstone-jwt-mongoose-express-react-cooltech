@@ -69,22 +69,27 @@ export const EditCredential = (props) => {
         (!credential ? (
           "Loading..."
         ) : (
-          <CredentialForm
-            type="edit"
-            formHandler={handleSubmit}
-            name={credential.name}
-            login={credential.login}
-            password={credential.password}
-            org_unit={credential.org_unit}
-            division={credential.division}
-          />
+          <div>
+            <h2>Edit credential:</h2>
+            <h3>{credential.name}</h3>
+            <CredentialForm
+              type="edit"
+              formHandler={handleSubmit}
+              name={credential.name}
+              login={credential.login}
+              password={credential.password}
+              org_unit={credential.org_unit}
+              division={credential.division}
+            />
+          </div>
         ))}
       {submitted && (
         <div>
           <h2>Your credential was edited successfully.</h2>
-          <button onClick={() => history.push("/")}>Home</button>
         </div>
       )}
+      <button onClick={props.returnToCredentials}>Back to credentials</button>
+      <button onClick={() => history.push("/")}>Home</button>
     </div>
   );
 };
