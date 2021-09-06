@@ -13,6 +13,7 @@ exports.authenticateNormal = async function (req, res, next) {
   const token = auth.split(" ")[1];
   try {
     const decoded = jwt.verify(token, "jwt-secret");
+    //console.log(decoded.role);
     if (
       decoded.role === "normal" ||
       decoded.role === "manager" ||

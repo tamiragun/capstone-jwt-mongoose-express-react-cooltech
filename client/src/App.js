@@ -5,6 +5,7 @@ import { Register } from "./components/Register/Register";
 import { AllUsers } from "./components/AllUsers/AllUsers";
 import { EditUser } from "./components/EditUser/EditUser";
 import { AllCredentials } from "./components/AllCredentials/AllCredentials";
+import { EditCredential } from "./components/EditCredential/EditCredential";
 
 function App() {
   return (
@@ -23,6 +24,9 @@ function App() {
             </Route>
             <Route path="/users">
               <AllUsers />
+            </Route>
+            <Route path="/credentials/edit">
+              <EditCredential id="61339be91ad2b41debf23ba8" />
             </Route>
             <Route path="/credentials">
               <AllCredentials org_unit="News management" division="Marketing" />
