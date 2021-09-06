@@ -9,7 +9,6 @@ exports.addCredential = async function (req, res) {
   let credentialSchema = new Credential({
     name: req.body.name,
     login: req.body.login,
-    email: req.body.email,
     password: req.body.password,
     org_unit: req.body.org_unit,
     division: req.body.division,
