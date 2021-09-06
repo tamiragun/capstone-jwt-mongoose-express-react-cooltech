@@ -1,12 +1,13 @@
 // Component that renders a single user, with options to edit fields
 
-import React from "react";
+import React, { useState } from "react";
 import { CredentialForm } from "../CredentialForm/CredentialForm";
-//import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export const AddCredential = (props) => {
+  const [submitted, setSubmitted] = useState(false);
   // Use history to be able to link to other Routes.
-  //const history = useHistory();
+  const history = useHistory();
 
   // Handler for when the form is submitted
 
@@ -31,12 +32,23 @@ export const AddCredential = (props) => {
       },
       body: JSON.stringify(requestedFields),
     });
-    // DISPLAY SUCCESS MESSAGE
+    // Display success message
+    setSubmitted(true);
   };
 
   return (
-    <div className="credential-edit-form">
-      <CredentialForm type="add" formHandler={handleSubmit} />
+    <div>
+      {!submitted && (
+        <div className="credential-edit-form">
+          <CredentialForm type="add" formHandler={handleSubmit} />
+        </div>
+      )}
+      {submitted && (
+        <div>
+          <h2>Your credential was submitted successfully.</h2>
+          <button onClick={() => history.push("/")}>Home</button>
+        </div>
+      )}
     </div>
   );
 };

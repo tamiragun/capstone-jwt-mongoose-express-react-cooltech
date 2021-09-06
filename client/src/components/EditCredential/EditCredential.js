@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { CredentialForm } from "../CredentialForm/CredentialForm";
-
-//import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export const EditCredential = (props) => {
   // Use history to be able to link to other Routes.
-  //const history = useHistory();
+  const history = useHistory();
   const [credential, setCredential] = useState();
+  const [submitted, setSubmitted] = useState(false);
 
   // Function to get the credential from the server and set the state accordingly
   const getCredential = async () => {
@@ -58,25 +58,32 @@ export const EditCredential = (props) => {
       },
       body: JSON.stringify(requestedFields),
     });
-    // DISPLAY SUCCESS MESSAGE
-
-    getCredential();
+    // Display success message
+    setSubmitted(true);
+    //getCredential();
   };
 
   return (
     <div className="credential-edit-form">
-      {!credential ? (
-        "Loading..."
-      ) : (
-        <CredentialForm
-          type="edit"
-          formHandler={handleSubmit}
-          name={credential.name}
-          login={credential.login}
-          password={credential.password}
-          org_unit={credential.org_unit}
-          division={credential.division}
-        />
+      {!submitted &&
+        (!credential ? (
+          "Loading..."
+        ) : (
+          <CredentialForm
+            type="edit"
+            formHandler={handleSubmit}
+            name={credential.name}
+            login={credential.login}
+            password={credential.password}
+            org_unit={credential.org_unit}
+            division={credential.division}
+          />
+        ))}
+      {submitted && (
+        <div>
+          <h2>Your credential was edited successfully.</h2>
+          <button onClick={() => history.push("/")}>Home</button>
+        </div>
       )}
     </div>
   );

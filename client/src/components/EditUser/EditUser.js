@@ -1,12 +1,13 @@
 // Component that renders a single user, with options to edit fields
 
 import React, { useEffect, useState } from "react";
-//import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export const EditUser = (props) => {
   // Use history to be able to link to other Routes.
-  //const history = useHistory();
+  const history = useHistory();
   const [user, setUser] = useState();
+  const [submitted, setSubmitted] = useState(false);
   // Declare states purely to control the form elements.
   const [org_unit, setOrg_unit] = useState();
   const [division, setDivision] = useState("");
@@ -48,7 +49,7 @@ export const EditUser = (props) => {
   // Upon first render, get the users and set the state
   useEffect(() => {
     getUser();
-  }, []);
+  }, [submitted]);
 
   // Handler for when an "assign" form is submitted
 
@@ -77,8 +78,9 @@ export const EditUser = (props) => {
     setDivision("");
     setOrg_unit(null);
     setRole(null);
-
-    getUser();
+    // Display success message
+    setSubmitted(true);
+    //getUser();
   };
 
   const handleUnassign = async (event) => {
@@ -100,9 +102,9 @@ export const EditUser = (props) => {
       },
       body: JSON.stringify(requestedFields),
     });
-    //const jsonResponse = await response.json();
-
-    getUser();
+    // Display success message
+    setSubmitted(true);
+    //getUser();
   };
 
   const org_units =
@@ -132,62 +134,70 @@ export const EditUser = (props) => {
 
   return (
     <div className="user-edit-form">
-      {!user ? (
-        "Loading..."
-      ) : (
-        <div>
-          <p>Name: {user.name}</p>
-          <p>Email: {user.email}</p>
-          <p>Role: {user.role}</p>
-          <form name="role" onSubmit={handleAssign}>
-            <label htmlFor="role">Change role to:</label>
-            <br></br>
-            <select id="role" name="role" onChange={handleChange} required>
-              <option value="">Please select</option>
-              <option value="normal">Normal</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-            <input type="submit" value="Change role"></input>
-          </form>
-          <p>
-            Organizational unit: <ul>{org_units}</ul>
-          </p>
-          <form name="org_unit" onSubmit={handleAssign}>
-            <label htmlFor="org_unit">Assign new organisational unit:</label>
-            <br></br>
-            <select
-              id="org_unit"
-              name="org_unit"
-              onChange={handleChange}
-              required
-            >
-              <option value="">Please select</option>
-              <option value="News management">News management</option>
-              <option value="Software reviews">Software reviews</option>
-              <option value="Hardware reviews">Hardware reviews</option>
-              <option value="Opinion publishing">Opinion publishing</option>
-            </select>
-            <input type="submit" value="Assign "></input>
-            <br></br>
-          </form>
-          <p>
-            Division: <ul>{divisions}</ul>
-          </p>
-          <form name="division" onSubmit={handleAssign}>
-            <label htmlFor="division">Assign new division:</label>
-            <br></br>
-            <input
-              type="text"
-              id="division"
-              name="division"
-              value={division}
-              onChange={handleChange}
-              required
-            ></input>
+      {!submitted &&
+        (!user ? (
+          "Loading..."
+        ) : (
+          <div>
+            <p>Name: {user.name}</p>
+            <p>Email: {user.email}</p>
+            <p>Role: {user.role}</p>
+            <form name="role" onSubmit={handleAssign}>
+              <label htmlFor="role">Change role to:</label>
+              <br></br>
+              <select id="role" name="role" onChange={handleChange} required>
+                <option value="">Please select</option>
+                <option value="normal">Normal</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+              <input type="submit" value="Change role"></input>
+            </form>
+            <p>
+              Organizational unit: <ul>{org_units}</ul>
+            </p>
+            <form name="org_unit" onSubmit={handleAssign}>
+              <label htmlFor="org_unit">Assign new organisational unit:</label>
+              <br></br>
+              <select
+                id="org_unit"
+                name="org_unit"
+                onChange={handleChange}
+                required
+              >
+                <option value="">Please select</option>
+                <option value="News management">News management</option>
+                <option value="Software reviews">Software reviews</option>
+                <option value="Hardware reviews">Hardware reviews</option>
+                <option value="Opinion publishing">Opinion publishing</option>
+              </select>
+              <input type="submit" value="Assign "></input>
+              <br></br>
+            </form>
+            <p>
+              Division: <ul>{divisions}</ul>
+            </p>
+            <form name="division" onSubmit={handleAssign}>
+              <label htmlFor="division">Assign new division:</label>
+              <br></br>
+              <input
+                type="text"
+                id="division"
+                name="division"
+                value={division}
+                onChange={handleChange}
+                required
+              ></input>
 
-            <input type="submit" value="Assign"></input>
-          </form>
+              <input type="submit" value="Assign"></input>
+            </form>
+          </div>
+        ))}
+      {submitted && (
+        <div>
+          <h2>You succesfully updated the user.</h2>
+          <button onClick={() => setSubmitted(false)}>Keep editing</button>
+          <button onClick={() => history.push("/")}>Home</button>
         </div>
       )}
     </div>
