@@ -56,6 +56,7 @@ export const Login = (props) => {
 
   return (
     <div className="login-form">
+      <h2>Log in</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Email:</label>
         <br></br>
@@ -81,6 +82,8 @@ export const Login = (props) => {
         <br></br>
         <input type="submit" value="Login"></input>
       </form>
+      <p>Not a user yet? Register here:</p>
+      <button onClick={() => history.push("/register")}>Register</button>
     </div>
   );
 };

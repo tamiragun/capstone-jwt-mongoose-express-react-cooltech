@@ -7,6 +7,7 @@ import { EditUser } from "./components/EditUser/EditUser";
 import { AllCredentials } from "./components/AllCredentials/AllCredentials";
 import { EditCredential } from "./components/EditCredential/EditCredential";
 import { AddCredential } from "./components/AddCredential/AddCredential";
+import { HomePage } from "./components/HomePage/HomePage";
 
 function App() {
   return (
@@ -34,6 +35,9 @@ function App() {
             </Route>
             <Route path="/credentials">
               <AllCredentials org_unit="News management" division="Marketing" />
+            </Route>
+            <Route path="/">
+              <HomePage />
             </Route>
           </Switch>
         </Router>

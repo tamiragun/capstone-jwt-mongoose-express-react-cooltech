@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const userControllers = require("../controllers/Users.controller");
+const auth = require("../middleware/authenticationMiddleware");
 
 const router = express.Router();
 
@@ -43,6 +44,28 @@ router.post("/register", userControllers.addUser, (req, res) => {
     algorithm: "HS256",
   });
   res.send({ token: token, message: "Registered successfully" });
+});
+
+router.post("/home", auth.authenticateNormal, (req, res) => {
+  // TODO ADD VALIDATION IF EMAIL ALREADY EXISTS OR IF NOT ALL FIELDS ARE ENTERED
+  const auth = require("../middleware/authenticationMiddleware");
+  if (!req.headers["authorization"]) {
+    console.log("Authorization denied - no token");
+    res.status(401).send({
+      err: "Authorization denied - no token",
+      msg: "You are not logged in. Try again.",
+    });
+  }
+  const headers = req.headers["authorization"];
+  const token = headers.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, "jwt-secret");
+    console.log("Successfully returned org_unit and division");
+    res.send({ org_unit: decoded.org_unit, division: decoded.division });
+  } catch (err) {
+    console.log("Bad JWT!");
+    res.status(401).send({ err: "Bad JWT!" });
+  }
 });
 
 module.exports = router;

@@ -45,16 +45,16 @@ export const CredentialForm = (props) => {
     }
   };
 
-  // Upon first render, check if the form is of type "add new credential" or
-  // "edit existing" credential. If the former, the form fields are required,
-  // otherwise not.
   useEffect(() => {
+    // Set the values in the fields as the current values of the credential
+    // or they will be blank in the case of a new credential.
     setName(props.name);
     setLogin(props.login);
     setPassword(props.password);
     setOrg_unit(props.org_unit);
     setDivision(props.division);
 
+    // To set the org-unit correctly, add the "selected" attribute where appropriate
     if (props.org_unit === "News management") {
       document.getElementById("news_management").selected = true;
     } else if (props.org_unit === "software_reviews") {
@@ -65,6 +65,9 @@ export const CredentialForm = (props) => {
       document.getElementById("opinion_publishing").selected = true;
     }
 
+    // Upon first render, check if the form is of type "add new credential" or
+    // "edit existing" credential. If the former, the form fields are required,
+    // otherwise not.
     if (props.type === "add") {
       document.getElementById("name").required = true;
       document.getElementById("login").required = true;
