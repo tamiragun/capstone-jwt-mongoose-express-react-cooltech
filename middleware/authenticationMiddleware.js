@@ -23,6 +23,7 @@ exports.authenticateNormal = async function (req, res, next) {
       // req.org_unit = decoded.org_unit;
       // req.division = decoded.division;
       req.affiliation = decoded.affiliation;
+      req.role = decoded.role;
       //console.log(req.affiliation);
       next();
     } else {

@@ -4,9 +4,8 @@ import { useHistory } from "react-router";
 export const HomePage = (props) => {
   const history = useHistory();
   const [loggedIn, setLoggedIn] = useState(false);
-  // const [org_unit, setOrg_unit] = useState([]);
-  // const [division, setDivision] = useState([]);
   const [affiliation, setAffiliation] = useState([]);
+  const [role, setRole] = useState();
   const [affiliationList, setAffiliationList] = useState();
 
   // Check if the user is logged in (i.e. if a token is set)
@@ -25,9 +24,7 @@ export const HomePage = (props) => {
           body: null,
         });
         const jsonResponse = await response.json();
-        //console.log(jsonResponse.affiliation);
-        // setOrg_unit(jsonResponse.org_unit);
-        // setDivision(jsonResponse.division);
+        setRole(jsonResponse.role);
         setAffiliation(jsonResponse.affiliation);
       }
     })();
@@ -43,14 +40,6 @@ export const HomePage = (props) => {
     history.push("/credentials", { credentialsToDisplay });
   };
 
-  // const org_unit_list = org_unit.map((org_unit, i) => (
-  //   <li key={"org_unit_" + i}>{org_unit}</li>
-  // ));
-  // const division_list = division.map((division, i) => (
-  //   <li key={"division_" + i}>
-  //     <button>{division}</button>
-  //   </li>
-  // ));
   useEffect(() => {
     if (affiliation) {
       const affiliation_list = affiliation.map((element, i) => (
@@ -82,12 +71,15 @@ export const HomePage = (props) => {
       )}
       {loggedIn && (
         <div>
-          {/* <h2>You are part of the following organisational units:</h2>
-          {!org_unit ? "Loading..." : <ul>{org_unit_list}</ul>}
-          <h2>Click to view your division's credentials:</h2>
-          {!division ? "Loading..." : <ul>{division_list}</ul>} */}
-          <h2>Click to view your division's credentials:</h2>
+          <h2>Cool tech</h2>
+          <h3>Your division's credentials:</h3>
           {!affiliationList ? "Loading..." : <ul>{affiliationList}</ul>}
+        </div>
+      )}
+      {role === "admin" && (
+        <div>
+          <h3>Admin section:</h3>
+          <button onClick={() => history.push("/users")}>View all users</button>
         </div>
       )}
     </div>

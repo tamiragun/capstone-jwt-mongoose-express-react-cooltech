@@ -57,8 +57,13 @@ router.post("/home", auth.authenticateNormal, (req, res) => {
   // const token = headers.split(" ")[1];
   try {
     // const decoded = jwt.verify(token, "jwt-secret");
-    console.log("Successfully returned affiliations: ", req.affiliation);
-    res.send({ affiliation: req.affiliation });
+    console.log(
+      "Successfully returned role: ",
+      req.role,
+      " and affiliations: ",
+      req.affiliation
+    );
+    res.send({ affiliation: req.affiliation, role: req.role });
   } catch (err) {
     console.log("CATCH ERROR: ", err);
     res.status(401).send({ err: "Could not retrieve affiliation" });
