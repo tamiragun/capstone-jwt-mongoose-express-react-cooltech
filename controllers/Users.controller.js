@@ -39,7 +39,7 @@ exports.addUser = async function (req, res, next) {
 
 exports.listAllUsers = async function (req, res) {
   try {
-    await User.find()
+    User.find()
       // Sort by created date
       .sort("-created")
       .exec(function (err, users) {
@@ -70,7 +70,7 @@ exports.findUser = async function (req, res, next) {
   }
 
   try {
-    await User.findOne(filter).exec(function (err, user) {
+    User.findOne(filter).exec(function (err, user) {
       if (err || user === null) {
         console.log("User not found");
         res.status(500).send({ message: "User not found" });
@@ -81,7 +81,7 @@ exports.findUser = async function (req, res, next) {
       }
     });
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log("CATCH ERROR 1:", error);
   }
 };
 
@@ -93,32 +93,15 @@ exports.assignUser = async function (req, res) {
 
   for (const key in requestedfields) {
     const element = requestedfields[key];
-    // if (key === "org_unit") {
-    //   if (req.user.org_unit.includes(element)) {
-    //     console.log("User already in this org_unit");
-    //     res.status(405).send({
-    //       message: "User is already associated with this organisational unit",
-    //     });
-    //   } else {
-    //     req.user.org_unit.push(element);
-    //     fieldsToUpdate.org_unit = req.user.org_unit;
-    //   }
-    // } else if (key === "division") {
-    //   if (req.user.division.includes(element)) {
-    //     console.log("User already in this division");
-    //     res.status(405).send({
-    //       message: "User is already associated with this division",
-    //     });
-    //   } else {
-    //     req.user.division.push(element);
-    //     fieldsToUpdate.division = req.user.division;
-    //   }
     if (key === "affiliation") {
-      if (req.user.affiliation.includes(element)) {
-        console.log("User already affiliated with this org_unit and division");
-        res.status(405).send({
-          message:
-            "User is already associated with this organisational unit and division",
+      const affiliationMatch = req.user.affiliation.filter(
+        (unit) => JSON.stringify(unit) === JSON.stringify(element)
+      );
+      if (affiliationMatch.length > 0) {
+        res.status(405);
+        console.log("User already associated with this org unit and division");
+        return res.send({
+          message: "User already associated with this org unit and division",
         });
       } else {
         req.user.affiliation.push(element);
@@ -126,9 +109,10 @@ exports.assignUser = async function (req, res) {
       }
     } else if (key === "role") {
       if (req.user.role === element) {
-        console.log("User already has this role");
-        res.status(405).send({
-          message: "User already has this role",
+        res.status(405);
+        console.log("User already associated with this role");
+        return res.send({
+          message: "User already associated with this role",
         });
       } else {
         fieldsToUpdate.role = element;
@@ -141,23 +125,23 @@ exports.assignUser = async function (req, res) {
     res.status(405).send({
       message: "Please indicate what to assign",
     });
-  }
-
-  try {
-    await User.findOneAndUpdate(
-      { _id: requestedfields._id },
-      fieldsToUpdate,
-      { new: true },
-      function (err, user) {
-        if (err) {
-          console.log("Something went wrong when updating the user.");
+  } else {
+    try {
+      User.findOneAndUpdate(
+        { _id: requestedfields._id },
+        fieldsToUpdate,
+        { new: true },
+        function (err, user) {
+          if (err) {
+            console.log("Something went wrong when updating the user.");
+          }
+          console.log("Updated user successfully: ", user.name);
+          res.send("Updated user successfully");
         }
-        console.log("Updated user successfully: ", user.name);
-        res.send("Updated user successfully");
-      }
-    );
-  } catch (error) {
-    console.log("CATCH ERROR:", error);
+      );
+    } catch (error) {
+      console.log("CATCH ERROR 2:", error);
+    }
   }
 };
 
@@ -166,45 +150,20 @@ exports.assignUser = async function (req, res) {
 exports.unAssignUser = async function (req, res) {
   const requestedfields = req.body;
   let fieldsToUpdate = {};
-
+  //console.log(requestedfields);
   for (const key in requestedfields) {
     const element = requestedfields[key];
-    //   if (key === "org_unit") {
-    //     if (req.user.org_unit.includes(element)) {
-    //       const newOrgUnits = req.user.org_unit.filter(
-    //         (unit) => unit !== element
-    //       );
-    //       fieldsToUpdate.org_unit = newOrgUnits;
-    //       console.log(newOrgUnits);
-    //     } else {
-    //       console.log("User is not associated with this organisational unit");
-    //       res.status(404).send({
-    //         message: "User is not associated with this organisational unit",
-    //       });
-    //     }
-    //   } else if (key === "division") {
-    //     if (req.user.division.includes(element)) {
-    //       const newDivisions = req.user.division.filter(
-    //         (unit) => unit !== element
-    //       );
-    //       fieldsToUpdate.division = newDivisions;
-    //     } else {
-    //       console.log("User is not associated with this division");
-    //       res.status(404).send({
-    //         message: "User is not associated with this division",
-    //       });
-    //     }
-    //   }
     if (key === "affiliation") {
-      if (req.user.affiliation.includes(element)) {
-        const newOrgUnits = req.user.affiliation.filter(
-          (unit) => unit !== element
-        );
+      const newOrgUnits = req.user.affiliation.filter(
+        (unit) => JSON.stringify(unit) !== JSON.stringify(element)
+      );
+      if (req.user.affiliation.length !== newOrgUnits.length) {
         fieldsToUpdate.affiliation = newOrgUnits;
         console.log(newOrgUnits);
       } else {
         console.log("User is not associated with this organisational unit");
-        res.status(404).send({
+        res.status(404);
+        return res.send({
           message: "User is not associated with this organisational unit",
         });
       }
@@ -219,7 +178,7 @@ exports.unAssignUser = async function (req, res) {
   }
 
   try {
-    await User.findOneAndUpdate(
+    User.findOneAndUpdate(
       { _id: requestedfields._id },
       fieldsToUpdate,
       { new: true },
@@ -232,6 +191,6 @@ exports.unAssignUser = async function (req, res) {
       }
     );
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log("CATCH ERROR 3:", error);
   }
 };

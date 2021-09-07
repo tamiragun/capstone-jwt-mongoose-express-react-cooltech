@@ -90,10 +90,13 @@ export const EditUser = (props) => {
     // Call the server with the id as argument.
     const url = "/users/unassign";
     const token = sessionStorage.getItem("token");
+
+    const [org, div] = event.target.value.split(",");
     let requestedFields = {
       _id: _id,
-      affiliation: { org_unit: org_unit, division: division },
+      affiliation: { org_unit: org, division: div },
     };
+    console.log(requestedFields);
 
     await fetch(url, {
       method: "POST",
@@ -108,30 +111,6 @@ export const EditUser = (props) => {
     //getUser();
   };
 
-  // const org_units =
-  //   user &&
-  //   user.org_unit.map((org_unit, i) => {
-  //     return (
-  //       <li key={"org_unit_" + i}>
-  //         {org_unit}
-  //         <button name="org_unit" value={org_unit} onClick={handleUnassign}>
-  //           Unassign
-  //         </button>
-  //       </li>
-  //     );
-  //   });
-  // const divisions =
-  //   user &&
-  //   user.division.map((division, i) => {
-  //     return (
-  //       <li key={"org_unit_" + i}>
-  //         {division}
-  //         <button name="division" value={division} onClick={handleUnassign}>
-  //           Unassign
-  //         </button>
-  //       </li>
-  //     );
-  //   });
   const affiliations =
     user &&
     user.affiliation.map((affiliation, i) => {
@@ -140,7 +119,7 @@ export const EditUser = (props) => {
           {`${affiliation.org_unit}, ${affiliation.division}`}
           <button
             name="affiliation"
-            value={affiliation}
+            value={`${affiliation.org_unit},${affiliation.division}`}
             onClick={handleUnassign}
           >
             Unassign
