@@ -11,27 +11,31 @@ exports.addUser = async function (req, res, next) {
     email: req.body.email,
     password: req.body.password,
     affiliation: req.body.affiliation,
-    // org_unit: req.body.org_unit,
-    // division: req.body.division,
   });
 
   // Try adding the document to the collection
   try {
-    await userSchema.save(function (err, user) {
-      if (err) {
-        console.log("Error creating the user");
-        console.log(err);
-        res
-          .status(500)
-          .send({ message: "Some error occurred while creating the user." });
+    await userSchema.save(function (error, user) {
+      if (error) {
+        console.log(
+          "Users.controller.adduser: Error creating the user:",
+          error
+        );
+        res.status(500).send({
+          error: error,
+          message: "We couldn't registering you.",
+        });
       } else {
-        console.log("Successfully added user: ", user.name);
+        console.log(
+          "Users.controller.adduser: Successfully added user: ",
+          user.name
+        );
         req.user = user;
         next();
       }
     });
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log("Users.controller.adduser: Catch error:", error);
   }
 };
 
@@ -42,20 +46,25 @@ exports.listAllUsers = async function (req, res) {
     User.find()
       // Sort by created date
       .sort("-created")
-      .exec(function (err, users) {
-        if (err) {
-          console.log("Error listing all users");
-          console.log(err);
-          res
-            .status(500)
-            .send({ message: "Some error occurred while retrieving users" });
+      .exec(function (error, users) {
+        if (error) {
+          console.log(
+            "Users.controller.listAllusers: Error listing all users: ",
+            error
+          );
+          res.status(500).send({
+            error: error,
+            message: "We couldn't retrieve the users to display for you.",
+          });
         } else {
-          console.log("Successfully displaying all users");
+          console.log(
+            "Users.controller.listAllusers: Successfully displaying all users"
+          );
           res.send(users);
         }
       });
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log("Users.controller.listAllusers: Catch error: ", error);
   }
 };
 
@@ -70,18 +79,30 @@ exports.findUser = async function (req, res, next) {
   }
 
   try {
-    User.findOne(filter).exec(function (err, user) {
-      if (err || user === null) {
-        console.log("User not found");
-        res.status(500).send({ message: "User not found" });
+    User.findOne(filter).exec(function (error, user) {
+      if (user === null) {
+        console.log("Users.controller.findUser: User not found");
+        res.status(500).send({
+          error: "Users.controller.findUser: Custom error",
+          message: "We couldn't find this user in our database.",
+        });
+      } else if (error) {
+        console.log("Users.controller.findUser: Error finding user: ", error);
+        res.status(500).send({
+          error: error,
+          message: "We couldn't find this user in our database.",
+        });
       } else {
         req.user = user;
-        console.log("successfully found user: ", user.name);
+        console.log(
+          "Users.controller.findUser: Successfully found user: ",
+          user.name
+        );
         next();
       }
     });
   } catch (error) {
-    console.log("CATCH ERROR 1:", error);
+    console.log("Users.controller.findUser: Catch error:", error);
   }
 };
 
@@ -99,9 +120,13 @@ exports.assignUser = async function (req, res) {
       );
       if (affiliationMatch.length > 0) {
         res.status(405);
-        console.log("User already associated with this org unit and division");
+        console.log(
+          "Users.controller.assignUser: User already associated with this org unit and division"
+        );
         return res.send({
-          message: "User already associated with this org unit and division",
+          error: "Users.controller.assignUser: custom error",
+          message:
+            "The user is already associated with this organisational unit and division.",
         });
       } else {
         req.user.affiliation.push(element);
@@ -110,9 +135,12 @@ exports.assignUser = async function (req, res) {
     } else if (key === "role") {
       if (req.user.role === element) {
         res.status(405);
-        console.log("User already associated with this role");
+        console.log(
+          "Users.controller.assignUser: User already associated with this role"
+        );
         return res.send({
-          message: "User already associated with this role",
+          error: "Users.controller.assignUser: custom error",
+          message: "The user is already associated with this role.",
         });
       } else {
         fieldsToUpdate.role = element;
@@ -121,9 +149,11 @@ exports.assignUser = async function (req, res) {
   }
 
   if (Object.keys(fieldsToUpdate).length === 0) {
-    console.log("There are no fields to update");
+    console.log("Users.controller.assignUser: There are no fields to update");
     res.status(405).send({
-      message: "Please indicate what to assign",
+      error: "Users.controller.assignUser: custom errore",
+      message:
+        "There were no fields to update. Please indicate what to assign.",
     });
   } else {
     try {
@@ -131,16 +161,28 @@ exports.assignUser = async function (req, res) {
         { _id: requestedfields._id },
         fieldsToUpdate,
         { new: true },
-        function (err, user) {
-          if (err) {
-            console.log("Something went wrong when updating the user.");
+        function (error, user) {
+          if (error) {
+            console.log(
+              "Users.controller.assignUser: Something went wrong when updating the user: ",
+              error
+            );
+            res.status(405).send({
+              error: error,
+              message: "We couldn't update this user.",
+            });
           }
-          console.log("Updated user successfully: ", user.name);
-          res.send("Updated user successfully");
+          console.log(
+            "Users.controller.assignUser: Updated user successfully: ",
+            user.name
+          );
+          res.send({
+            message: "We updated the user successfully.",
+          });
         }
       );
     } catch (error) {
-      console.log("CATCH ERROR 2:", error);
+      console.log("Users.controller.assignUser: Catch error: ", error);
     }
   }
 };
@@ -150,7 +192,6 @@ exports.assignUser = async function (req, res) {
 exports.unAssignUser = async function (req, res) {
   const requestedfields = req.body;
   let fieldsToUpdate = {};
-  //console.log(requestedfields);
   for (const key in requestedfields) {
     const element = requestedfields[key];
     if (key === "affiliation") {
@@ -159,21 +200,26 @@ exports.unAssignUser = async function (req, res) {
       );
       if (req.user.affiliation.length !== newOrgUnits.length) {
         fieldsToUpdate.affiliation = newOrgUnits;
-        console.log(newOrgUnits);
       } else {
-        console.log("User is not associated with this organisational unit");
+        console.log(
+          "Users.controller.unAssignUser: User is not associated with this organisational unit and division."
+        );
         res.status(404);
         return res.send({
-          message: "User is not associated with this organisational unit",
+          error: "Users.controller.unAssignUser: custom error",
+          message:
+            "The user is not associated with this organisational unit and division.",
         });
       }
     }
   }
 
   if (Object.keys(fieldsToUpdate).length === 0) {
-    console.log("There is nothing to unassign");
+    console.log("Users.controller.unAssignUser: There is nothing to unassign");
     res.status(405).send({
-      message: "Please indicate what to unassign",
+      error: "Users.controller.unAssignUser: custom error",
+      message:
+        "There were no fields to update. Please indicate what to unassign.",
     });
   }
 
@@ -182,15 +228,27 @@ exports.unAssignUser = async function (req, res) {
       { _id: requestedfields._id },
       fieldsToUpdate,
       { new: true },
-      function (err, user) {
-        if (err) {
-          console.log("Something went wrong when updating the user.");
+      function (error, user) {
+        if (error) {
+          console.log(
+            "Users.controller.unAssignUser: Something went wrong when updating the user: ",
+            error
+          );
+          res.status(504).send({
+            error: error,
+            message: "We couldn't update this user.",
+          });
         }
-        console.log("Updated user successfully: ", user.name);
-        res.send("Updated user successfully");
+        console.log(
+          "Users.controller.unAssignUser: Updated user successfully: ",
+          user.name
+        );
+        res.send({
+          message: "We updated the user successfully.",
+        });
       }
     );
   } catch (error) {
-    console.log("CATCH ERROR 3:", error);
+    console.log("Users.controller.unAssignUser: Catch error: ", error);
   }
 };

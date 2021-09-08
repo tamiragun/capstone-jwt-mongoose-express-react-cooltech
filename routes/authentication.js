@@ -23,7 +23,10 @@ router.post("/login", userControllers.findUser, (req, res) => {
     });
     res.send({ token: token, message: "Logged in successfully" });
   } else {
-    res.status(403).send({ err: "Incorrect password" });
+    res.status(403).send({
+      error: "Incorrect password",
+      message: "You entered an incorrect password.",
+    });
   }
 });
 
@@ -45,18 +48,7 @@ router.post("/register", userControllers.addUser, (req, res) => {
 });
 
 router.post("/home", auth.authenticateNormal, (req, res) => {
-  //const auth = require("../middleware/authenticationMiddleware");
-  // if (!req.headers["authorization"]) {
-  //   console.log("Authorization denied - no token");
-  //   res.status(401).send({
-  //     err: "Authorization denied - no token",
-  //     msg: "You are not logged in. Try again.",
-  //   });
-  // }
-  // const headers = req.headers["authorization"];
-  // const token = headers.split(" ")[1];
   try {
-    // const decoded = jwt.verify(token, "jwt-secret");
     console.log(
       "Successfully returned role: ",
       req.role,
@@ -64,9 +56,13 @@ router.post("/home", auth.authenticateNormal, (req, res) => {
       req.affiliation
     );
     res.send({ affiliation: req.affiliation, role: req.role });
-  } catch (err) {
-    console.log("CATCH ERROR: ", err);
-    res.status(401).send({ err: "Could not retrieve affiliation" });
+  } catch (error) {
+    console.log("CATCH ERROR: ", error);
+    res.status(401).send({
+      error: "Could not retrieve affiliation",
+      message:
+        "We were unable to find the organisational unit and division for you.",
+    });
   }
 });
 

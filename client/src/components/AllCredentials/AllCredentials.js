@@ -7,6 +7,7 @@ import { EditCredential } from "../EditCredential/EditCredential";
 export const AllCredentials = (props) => {
   const [credentials, setCredentials] = useState([]);
   const [displayEdit, setDisplayEdit] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [editCredential, setEditCredential] = useState();
   const location = useLocation();
   const { credentialsToDisplay } = location.state || {
@@ -17,11 +18,10 @@ export const AllCredentials = (props) => {
 
   // Function to get the credentials from the server and set the state accordingly
   const getCredentials = async () => {
+    setIsError(false);
     try {
       const token = sessionStorage.getItem("token");
       const url = "/credentials";
-      //   const org_unit = props.org_unit;
-      //   const division = props.division;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -31,16 +31,22 @@ export const AllCredentials = (props) => {
         body: JSON.stringify({ affiliation: credentialsToDisplay }),
       });
       const jsonResponse = await response.json();
-      //console.log(jsonResponse);
-      setCredentials(jsonResponse);
-    } catch (err) {
-      console.log(err);
+      if (jsonResponse.error) {
+        console.log(jsonResponse.error);
+        setIsError(jsonResponse.message);
+      } else {
+        setCredentials(jsonResponse);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(error);
     }
   };
 
   // Check if the user has permission to edit
 
   const authenticate = async () => {
+    setIsError(false);
     try {
       const token = sessionStorage.getItem("token");
       const url = "/credentials/updatePermission";
@@ -53,11 +59,15 @@ export const AllCredentials = (props) => {
         body: null,
       });
       const jsonResponse = await response.json();
-      if (jsonResponse.access) {
+      if (jsonResponse.error) {
+        console.log(jsonResponse.error);
+        setIsError(jsonResponse.message);
+      } else if (jsonResponse.access) {
         setDisplayEdit(true);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
+      setIsError(error);
     }
   };
 
@@ -96,45 +106,62 @@ export const AllCredentials = (props) => {
 
   return (
     <div>
-      {!editCredential &&
-        (!credentials ? (
-          "loading..."
-        ) : (
-          <div>
-            <h2>All credentials for:</h2>
-            <h3>
-              Organisational unit: {credentialsToDisplay.org_unit}
-              <br></br>
-              Division: {credentialsToDisplay.division}
-            </h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Login</th>
-                  <th>Password</th>
-                  <th>Organisational unit</th>
-                  <th>Division</th>
-                  {displayEdit && <th>Action</th>}
-                </tr>
-              </thead>
-              <tbody>{credentialList}</tbody>
-            </table>
-            <button
-              onClick={() =>
-                history.push("/credentials/add", { credentialsToDisplay })
-              }
-            >
-              Add new credential
-            </button>
-            <button onClick={() => history.push("/")}>Home</button>
-          </div>
-        ))}
-      {editCredential && (
-        <EditCredential
-          id={editCredential}
-          returnToCredentials={returnToCredentials}
-        />
+      {isError ? (
+        <div>
+          Sorry! There was an eror performing this action:<br></br>
+          {isError} <br></br>
+          <button
+            onClick={() => {
+              history.goBack();
+            }}
+          >
+            Go back
+          </button>
+          <button onClick={() => history.push("/")}>Go home</button>
+        </div>
+      ) : (
+        <div>
+          {!editCredential &&
+            (!credentials ? (
+              "loading..."
+            ) : (
+              <div>
+                <h2>All credentials for:</h2>
+                <h3>
+                  Organisational unit: {credentialsToDisplay.org_unit}
+                  <br></br>
+                  Division: {credentialsToDisplay.division}
+                </h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Login</th>
+                      <th>Password</th>
+                      <th>Organisational unit</th>
+                      <th>Division</th>
+                      {displayEdit && <th>Action</th>}
+                    </tr>
+                  </thead>
+                  <tbody>{credentialList}</tbody>
+                </table>
+                <button
+                  onClick={() =>
+                    history.push("/credentials/add", { credentialsToDisplay })
+                  }
+                >
+                  Add new credential
+                </button>
+                <button onClick={() => history.push("/")}>Home</button>
+              </div>
+            ))}
+          {editCredential && (
+            <EditCredential
+              id={editCredential}
+              returnToCredentials={returnToCredentials}
+            />
+          )}
+        </div>
       )}
     </div>
   );

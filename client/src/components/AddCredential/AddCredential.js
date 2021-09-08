@@ -6,6 +6,7 @@ import { useLocation, useHistory } from "react-router-dom";
 
 export const AddCredential = (props) => {
   const [submitted, setSubmitted] = useState(false);
+  const [isError, setIsError] = useState(false);
   // Use history to be able to link to other Routes.
   const history = useHistory();
   const location = useLocation();
@@ -17,6 +18,7 @@ export const AddCredential = (props) => {
 
   const handleSubmit = async (name, login, password, org_unit, division) => {
     // Call the server with the id as argument.
+    setIsError(false);
     const url = "/credentials/create";
     const token = sessionStorage.getItem("token");
     let requestedFields = {
@@ -27,30 +29,57 @@ export const AddCredential = (props) => {
       org_unit: org_unit,
       division: division,
     };
-
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestedFields),
-    });
-    // Display success message
-    setSubmitted(true);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestedFields),
+      });
+      const jsonResponse = response.json();
+      if (jsonResponse.error) {
+        console.log(jsonResponse.error);
+        setIsError(jsonResponse.message);
+      } else {
+        // Display success message
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(error);
+    }
   };
 
   return (
     <div>
-      {!submitted && (
-        <div className="credential-edit-form">
-          <h2>Add new credential</h2>
-          <CredentialForm type="add" formHandler={handleSubmit} />
-        </div>
-      )}
-      {submitted && (
+      {isError ? (
         <div>
-          <h2>Your credential was submitted successfully.</h2>
+          Sorry! There was an eror performing this action:<br></br>
+          {isError} <br></br>
+          <button
+            onClick={() => {
+              setIsError(false);
+              setSubmitted(false);
+            }}
+          >
+            Go back
+          </button>
+        </div>
+      ) : (
+        <div>
+          {!submitted && (
+            <div className="credential-edit-form">
+              <h2>Add new credential</h2>
+              <CredentialForm type="add" formHandler={handleSubmit} />
+            </div>
+          )}
+          {submitted && (
+            <div>
+              <h2>Your credential was submitted successfully.</h2>
+            </div>
+          )}
         </div>
       )}
       <button

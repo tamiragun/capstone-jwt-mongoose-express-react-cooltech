@@ -9,35 +9,41 @@ export const EditCredential = (props) => {
   const history = useHistory();
   const [credential, setCredential] = useState();
   const [submitted, setSubmitted] = useState(false);
-
-  // Function to get the credential from the server and set the state accordingly
-  const getCredential = async () => {
-    try {
-      const token = sessionStorage.getItem("token");
-      const url = "/credentials/display";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ _id: props.id }),
-      });
-      const jsonResponse = await response.json();
-      setCredential(jsonResponse);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const [isError, setIsError] = useState(false);
 
   // Upon first render, get the credential and set the state
   useEffect(() => {
-    getCredential();
-  }, []);
+    (async () => {
+      setIsError(false);
+      try {
+        const token = sessionStorage.getItem("token");
+        const url = "/credentials/display";
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ _id: props.id }),
+        });
+        const jsonResponse = await response.json();
+        if (jsonResponse.error) {
+          console.log(jsonResponse.error);
+          setIsError(jsonResponse.message);
+        } else {
+          setCredential(jsonResponse);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsError(error);
+      }
+    })();
+  }, [submitted]);
 
   // Handler for when the form is submitted
 
   const handleSubmit = async (name, login, password, org_unit, division) => {
+    setIsError(false);
     // Call the server with the id as argument.
     const url = "/credentials/update";
     const token = sessionStorage.getItem("token");
@@ -49,43 +55,69 @@ export const EditCredential = (props) => {
       org_unit: org_unit,
       division: division,
     };
-
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestedFields),
-    });
-    // Display success message
-    setSubmitted(true);
-    //getCredential();
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestedFields),
+      });
+      const jsonResponse = await response.json();
+      if (jsonResponse.error) {
+        console.log(jsonResponse.error);
+        setIsError(jsonResponse.message);
+      } else {
+        // Display success message
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(error);
+    }
   };
 
   return (
     <div className="credential-edit-form">
-      {!submitted &&
-        (!credential ? (
-          "Loading..."
-        ) : (
-          <div>
-            <h2>Edit credential:</h2>
-            <h3>{credential.name}</h3>
-            <CredentialForm
-              type="edit"
-              formHandler={handleSubmit}
-              name={credential.name}
-              login={credential.login}
-              password={credential.password}
-              org_unit={credential.org_unit}
-              division={credential.division}
-            />
-          </div>
-        ))}
-      {submitted && (
+      {isError ? (
         <div>
-          <h2>Your credential was edited successfully.</h2>
+          Sorry! There was an eror performing this action:<br></br>
+          {isError} <br></br>
+          <button
+            onClick={() => {
+              setIsError(false);
+              setSubmitted(false);
+            }}
+          >
+            Go back
+          </button>
+        </div>
+      ) : (
+        <div>
+          {!submitted &&
+            (!credential ? (
+              "Loading..."
+            ) : (
+              <div>
+                <h2>Edit credential:</h2>
+                <h3>{credential.name}</h3>
+                <CredentialForm
+                  type="edit"
+                  formHandler={handleSubmit}
+                  name={credential.name}
+                  login={credential.login}
+                  password={credential.password}
+                  org_unit={credential.org_unit}
+                  division={credential.division}
+                />
+              </div>
+            ))}
+          {submitted && (
+            <div>
+              <h2>Your credential was edited successfully.</h2>
+            </div>
+          )}
         </div>
       )}
       <button onClick={props.returnToCredentials}>Back to credentials</button>

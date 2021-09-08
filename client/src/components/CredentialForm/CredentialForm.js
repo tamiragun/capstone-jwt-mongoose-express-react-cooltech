@@ -37,8 +37,6 @@ export const CredentialForm = (props) => {
     // to edit an existing job or to add a new job.
     props.formHandler(name, login, password, org_unit, division);
 
-    //DISPLAY SUCCESS MESSAGE INSTEAD OF FORM
-
     // Redirect the user back to the home page if they are on an edit job page.
     if (props.type === "edit") {
       //history.push("/");

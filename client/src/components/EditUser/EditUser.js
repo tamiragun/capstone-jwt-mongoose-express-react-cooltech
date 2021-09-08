@@ -12,6 +12,7 @@ export const EditUser = (props) => {
   };
   const [user, setUser] = useState();
   const [submitted, setSubmitted] = useState(false);
+  const [isError, setIsError] = useState(false);
   // Declare states purely to control the form elements.
   const [org_unit, setOrg_unit] = useState();
   const [division, setDivision] = useState("");
@@ -30,34 +31,39 @@ export const EditUser = (props) => {
     }
   };
 
-  // Function to get the user from the server and set the state accordingly
-  const getUser = async () => {
-    try {
-      const token = sessionStorage.getItem("token");
-      const url = "/users/singleUser";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ _id: _id }),
-      });
-      const jsonResponse = await response.json();
-      setUser(jsonResponse);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // Upon first render, get the users and set the state
   useEffect(() => {
-    getUser();
+    (async () => {
+      setIsError(false);
+      try {
+        const token = sessionStorage.getItem("token");
+        const url = "/users/singleUser";
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ _id: _id }),
+        });
+        const jsonResponse = await response.json();
+        if (jsonResponse.error) {
+          console.log(jsonResponse.error);
+          setIsError(jsonResponse.message);
+        } else {
+          setUser(jsonResponse);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsError(error);
+      }
+    })();
   }, [submitted]);
 
   // Handler for when an "assign" form is submitted
 
   const handleAssign = async (event) => {
+    setIsError(false);
     event.preventDefault();
     // Call the server with the id as argument.
     const url = "/users/assign";
@@ -68,24 +74,34 @@ export const EditUser = (props) => {
     } else if (event.target.name === "role") {
       requestedFields.role = role;
     }
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestedFields),
-    });
-    //const jsonResponse = await response.json();
-    setDivision("");
-    setOrg_unit(null);
-    setRole(null);
-    // Display success message
-    setSubmitted(true);
-    //getUser();
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestedFields),
+      });
+      const jsonResponse = await response.json();
+      if (jsonResponse.error) {
+        console.log(jsonResponse.error);
+        setIsError(jsonResponse.message);
+      } else {
+        setDivision("");
+        setOrg_unit(null);
+        setRole(null);
+        // Display success message
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(error);
+    }
   };
 
   const handleUnassign = async (event) => {
+    setIsError(false);
     event.preventDefault();
     // Call the server with the id as argument.
     const url = "/users/unassign";
@@ -96,19 +112,28 @@ export const EditUser = (props) => {
       _id: _id,
       affiliation: { org_unit: org, division: div },
     };
-    console.log(requestedFields);
 
-    await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestedFields),
-    });
-    // Display success message
-    setSubmitted(true);
-    //getUser();
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestedFields),
+      });
+      const jsonResponse = await response.json();
+      if (jsonResponse.error) {
+        console.log(jsonResponse.error);
+        setIsError(jsonResponse.message);
+      } else {
+        // Display success message
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsError(error);
+    }
   };
 
   const affiliations =
@@ -130,102 +155,90 @@ export const EditUser = (props) => {
 
   return (
     <div className="user-edit-form">
-      {!submitted &&
-        (!user ? (
-          "Loading..."
-        ) : (
-          <div>
-            <h2>Edit user: {user.name}</h2>
-            <p>Name: {user.name}</p>
-            <p>Email: {user.email}</p>
-            <p>Role: {user.role}</p>
-            <form name="role" onSubmit={handleAssign}>
-              <label htmlFor="role">Change role to:</label>
-              <br></br>
-              <select id="role" name="role" onChange={handleChange} required>
-                <option value="">Please select</option>
-                <option value="normal">Normal</option>
-                <option value="manager">Manager</option>
-                <option value="admin">Admin</option>
-              </select>
-              <input type="submit" value="Change role"></input>
-            </form>
-            {/* <p>
-              Organizational unit: <ul>{org_units}</ul>
-            </p>
-            <form name="org_unit" onSubmit={handleAssign}>
-              <label htmlFor="org_unit">Assign new organisational unit:</label>
-              <br></br>
-              <select
-                id="org_unit"
-                name="org_unit"
-                onChange={handleChange}
-                required
-              >
-                <option value="">Please select</option>
-                <option value="News management">News management</option>
-                <option value="Software reviews">Software reviews</option>
-                <option value="Hardware reviews">Hardware reviews</option>
-                <option value="Opinion publishing">Opinion publishing</option>
-              </select>
-              <input type="submit" value="Assign "></input>
-              <br></br>
-            </form>
-            <p>
-              Division: <ul>{divisions}</ul>
-            </p>
-            <form name="division" onSubmit={handleAssign}>
-              <label htmlFor="division">Assign new division:</label>
-              <br></br>
-              <input
-                type="text"
-                id="division"
-                name="division"
-                value={division}
-                onChange={handleChange}
-                required
-              ></input>
-
-              <input type="submit" value="Assign"></input>
-            </form> */}
-            <p>
-              Affiliation: <ul>{affiliations}</ul>
-            </p>
-            <form name="affiliation" onSubmit={handleAssign}>
-              <label htmlFor="org_unit">Assign new organisational unit:</label>
-
-              <select
-                id="org_unit"
-                name="org_unit"
-                onChange={handleChange}
-                required
-              >
-                <option value="">Please select</option>
-                <option value="News management">News management</option>
-                <option value="Software reviews">Software reviews</option>
-                <option value="Hardware reviews">Hardware reviews</option>
-                <option value="Opinion publishing">Opinion publishing</option>
-              </select>
-              <br></br>
-              <label htmlFor="division">Assign new division:</label>
-
-              <input
-                type="text"
-                id="division"
-                name="division"
-                value={division}
-                onChange={handleChange}
-                required
-              ></input>
-              <br></br>
-              <input type="submit" value="Assign"></input>
-            </form>
-          </div>
-        ))}
-      {submitted && (
+      {isError ? (
         <div>
-          <h2>You succesfully updated the user.</h2>
-          <button onClick={() => setSubmitted(false)}>Keep editing</button>
+          Sorry! There was an eror performing this action:<br></br>
+          {isError} <br></br>
+          <button
+            onClick={() => {
+              setIsError(false);
+              setSubmitted(false);
+            }}
+          >
+            Go back
+          </button>
+        </div>
+      ) : (
+        <div>
+          {!submitted &&
+            (!user ? (
+              "Loading..."
+            ) : (
+              <div>
+                <h2>Edit user: {user.name}</h2>
+                <p>Name: {user.name}</p>
+                <p>Email: {user.email}</p>
+                <p>Role: {user.role}</p>
+                <form name="role" onSubmit={handleAssign}>
+                  <label htmlFor="role">Change role to:</label>
+                  <br></br>
+                  <select
+                    id="role"
+                    name="role"
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Please select</option>
+                    <option value="normal">Normal</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <input type="submit" value="Change role"></input>
+                </form>
+                <p>
+                  Affiliation: <ul>{affiliations}</ul>
+                </p>
+                <form name="affiliation" onSubmit={handleAssign}>
+                  <label htmlFor="org_unit">
+                    Assign new organisational unit:
+                  </label>
+
+                  <select
+                    id="org_unit"
+                    name="org_unit"
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Please select</option>
+                    <option value="News management">News management</option>
+                    <option value="Software reviews">Software reviews</option>
+                    <option value="Hardware reviews">Hardware reviews</option>
+                    <option value="Opinion publishing">
+                      Opinion publishing
+                    </option>
+                  </select>
+                  <br></br>
+                  <label htmlFor="division">Assign new division:</label>
+
+                  <input
+                    type="text"
+                    id="division"
+                    name="division"
+                    value={division}
+                    onChange={handleChange}
+                    required
+                  ></input>
+                  <br></br>
+                  <input type="submit" value="Assign"></input>
+                </form>
+              </div>
+            ))}
+          {submitted && (
+            <div>
+              <h2>You succesfully updated the user.</h2>
+              <button onClick={() => setSubmitted(false)}>Keep editing</button>
+            </div>
+          )}
         </div>
       )}
       <button onClick={() => history.push("/users")}>Back to all users</button>

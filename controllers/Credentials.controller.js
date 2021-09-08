@@ -16,22 +16,28 @@ exports.addCredential = async function (req, res) {
 
   // Try adding the document to the collection
   try {
-    await credentialSchema.save(function (err, credential) {
-      if (err) {
-        console.log("Error creating the credential");
-        console.log(err);
+    await credentialSchema.save(function (error, credential) {
+      if (error) {
+        console.log(
+          "Credentials.controller.addCredential: Error creating the credential: ",
+          error
+        );
         res.status(500).send({
-          message: "Some error occurred while creating the credential.",
+          error: error,
+          message: "We couldn't create this credential.",
         });
       } else {
-        console.log("Successfully added credential: ", credential.name);
+        console.log(
+          "Credentials.controller.addCredential: Successfully added credential: ",
+          credential.name
+        );
         res.send({
-          message: `Successfully added credential: ${credential.name}`,
+          message: `We successfully added credential: ${credential.name}`,
         });
       }
     });
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log("Credentials.controller.addCredential: Catch error:", error);
   }
 };
 
@@ -44,25 +50,30 @@ exports.listAllCredentials = async function (req, res) {
   };
   //console.log(filter);
   try {
-    await Credential.find(filter)
+    Credential.find(filter)
       .sort("-created")
-      .exec(function (err, credentials) {
-        if (err) {
-          console.log("Error listing credentials");
-          console.log(err);
+      .exec(function (error, credentials) {
+        if (error) {
+          console.log(
+            "Credentials.controller.listAllCredentials: Error listing credentials: ",
+            error
+          );
           res.status(500).send({
-            message: "Some error occurred while retrieving credentials",
+            error: error,
+            message: "We couldn't retrieve the credentials from the database.",
           });
         } else {
           console.log(
-            `Successfully displaying ${credentials.length} credentials`
+            `Credentials.controller.listAllCredentials: Successfully displaying ${credentials.length} credentials`
           );
-          //console.log(credentials);
           res.send(credentials);
         }
       });
-  } catch (err) {
-    console.log("CATCH ERROR:", err);
+  } catch (error) {
+    console.log(
+      "Credentials.controller.listAllCredentials: Catch error:",
+      error
+    );
   }
 };
 
@@ -72,18 +83,31 @@ exports.findCredential = async function (req, res, next) {
   let filter = { _id: req.body._id };
 
   try {
-    await Credential.findOne(filter).exec(function (err, credential) {
-      if (err || credential === null) {
-        console.log("Credential not found");
-        res.status(500).send({ message: "Credential not found" });
+    Credential.findOne(filter).exec(function (error, credential) {
+      if (credential === null) {
+        console.log(
+          "Credentials.controller.findCredential: Credential not found"
+        );
+        res
+          .status(500)
+          .send({ error: "Custom error", message: "Credential not found" });
+      } else if (error) {
+        console.log("Credentials.controller.findCredential: ", error);
+        res.status(500).send({
+          error: error,
+          message: "We couldn't find credential in the database.",
+        });
       } else {
         req.credential = credential;
-        console.log("successfully found credential: ", credential.name);
+        console.log(
+          "Credentials.controller.findCredential: Successfully found credential: ",
+          credential.name
+        );
         next();
       }
     });
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log("Credentials.controller.findCredential: Catch error:", error);
   }
 };
 
@@ -101,26 +125,45 @@ exports.updateCredential = async function (req, res) {
   }
 
   if (Object.keys(fieldsToUpdate).length === 0) {
-    console.log("There are no fields to update");
+    console.log(
+      "Credentials.controller.updateCredential: There are no fields to update"
+    );
     res.status(405).send({
-      message: "Please indicate what to assign",
+      error: "Credentials.controller.updateCredential: custom error",
+      message:
+        "There were no fields to update. Please indicate what to update.",
     });
   }
 
   try {
-    await Credential.findOneAndUpdate(
+    Credential.findOneAndUpdate(
       { _id: requestedfields._id },
       fieldsToUpdate,
       { new: true },
-      function (err, credential) {
-        if (err) {
-          console.log("Something went wrong when updating the credential.");
+      function (error, credential) {
+        if (error) {
+          console.log(
+            "Credentials.controller.updateCredential: Something went wrong when updating the credential: ",
+            error
+          );
+          res.status(500).send({
+            error: error,
+            message: "We couldn't update this credential.",
+          });
         }
-        console.log("Updated credential successfully: ", credential.name);
-        res.send("Updated credential successfully");
+        console.log(
+          "Credentials.controller.updateCredential: Updated credential successfully: ",
+          credential.name
+        );
+        res.send({
+          message: "We updated the credential successfully.",
+        });
       }
     );
   } catch (error) {
-    console.log("CATCH ERROR:", error);
+    console.log(
+      "Credentials.controller.updateCredential: Catch error: ",
+      error
+    );
   }
 };
