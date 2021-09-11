@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
+import "./HomePage.css";
 
 export const HomePage = (props) => {
   const history = useHistory();
@@ -47,11 +48,24 @@ export const HomePage = (props) => {
       if (affiliation.length > 0) {
         const affiliation_list = affiliation.map((element, i) => (
           <li key={"affiliation_" + i}>
-            <div>Organisational unit: {element.org_unit}</div>
-            <div>Division: {element.division}</div>
+            <div className="affiliation-bullet">
+              <div>
+                <p>
+                  <strong>Organisational unit: </strong>
+                </p>
+                <p>
+                  <strong>Division: </strong>
+                </p>
+              </div>
+              <div>
+                <p>{element.org_unit}</p>
+                <p>{element.division}</p>
+              </div>
+            </div>
             <button
               name={`${element.org_unit},${element.division}`}
               onClick={handleClick}
+              className="button"
             >
               View
             </button>
@@ -78,7 +92,7 @@ export const HomePage = (props) => {
   };
 
   return (
-    <div>
+    <div className="home-page">
       {isError ? (
         <div>
           Sorry! There was an eror performing this action:<br></br>
@@ -88,27 +102,38 @@ export const HomePage = (props) => {
         <div>
           {!loggedIn && (
             <div>
-              <h2>
-                Welcome! Register or log in to access your division's
-                credentials:
-              </h2>
-              <button onClick={() => history.push("/login")}>Login</button>
-              <button onClick={() => history.push("/register")}>
+              <h2>Register or log in to access your division's credentials:</h2>
+              <button
+                className="button nav-button"
+                onClick={() => history.push("/login")}
+              >
+                Login
+              </button>
+              <button
+                className="button nav-button"
+                onClick={() => history.push("/register")}
+              >
                 Register
               </button>
             </div>
           )}
           {loggedIn && (
-            <div>
-              <h2>Cool tech</h2>
+            <div className="card">
               <h3>Your division's credentials:</h3>
-              {!affiliationList ? "Loading..." : <ul>{affiliationList}</ul>}
+              {!affiliationList ? (
+                "Loading..."
+              ) : (
+                <ul className="affiliation-list">{affiliationList}</ul>
+              )}
             </div>
           )}
           {role === "admin" && (
-            <div>
+            <div className="card">
               <h3>Admin section:</h3>
-              <button onClick={() => history.push("/users")}>
+              <button
+                className="button nav-button"
+                onClick={() => history.push("/users")}
+              >
                 View all users
               </button>
             </div>

@@ -48,6 +48,7 @@ router.post("/register", userControllers.addUser, (req, res) => {
 });
 
 router.post("/home", auth.authenticateNormal, (req, res) => {
+  // meniton why you used a try / catch block here (ie because rol and affiliation could be absent)
   try {
     console.log(
       "Successfully returned role: ",
@@ -59,7 +60,7 @@ router.post("/home", auth.authenticateNormal, (req, res) => {
   } catch (error) {
     console.log("CATCH ERROR: ", error);
     res.status(401).send({
-      error: "Could not retrieve affiliation",
+      error: error,
       message:
         "We were unable to find the organisational unit and division for you.",
     });

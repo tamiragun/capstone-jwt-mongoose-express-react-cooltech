@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
+import "./AllUsers.css";
 
 export const AllUsers = (props) => {
   const [users, setUsers] = useState([]);
@@ -40,18 +41,27 @@ export const AllUsers = (props) => {
   const userList = users.map((user) => {
     const affiliation_list = user.affiliation.map((affiliation, i) => (
       <li key={"affiliation_" + i}>
-        <div>Organisational unit: {affiliation.org_unit}</div>
-        <div>Division: {affiliation.division}</div>
+        <div>
+          <strong>Org unit: </strong>
+          {affiliation.org_unit}
+        </div>
+        <div>
+          <strong>Division: </strong>
+          {affiliation.division}
+        </div>
       </li>
     ));
     return (
       <tr key={user._id}>
         <td>{user.name}</td>
         <td>{user.email}</td>
-        <td>{affiliation_list}</td>
+        <td>
+          <ul>{affiliation_list}</ul>
+        </td>
         <td>{user.role}</td>
         <td>
           <button
+            className="button"
             name={user._id}
             onClick={() => history.push("/users/edit", { _id: user._id })}
           >
@@ -70,6 +80,7 @@ export const AllUsers = (props) => {
           Sorry! There was an eror performing this action:<br></br>
           {isError} <br></br>
           <button
+            className="button nav-button"
             onClick={() => {
               history.goBack();
             }}
@@ -82,21 +93,27 @@ export const AllUsers = (props) => {
           {!users ? (
             "loading..."
           ) : (
-            <table>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Affiliation</th>
-                <th>Role</th>
-                <th>Action</th>
-              </tr>
-              {userList}
-            </table>
+            <div className="users-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Affiliation</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>{userList}</tbody>
+              </table>
+            </div>
           )}
         </div>
       )}
 
-      <button onClick={() => history.push("/")}>Home</button>
+      <button className="button nav-button" onClick={() => history.push("/")}>
+        Home
+      </button>
     </div>
   );
 };

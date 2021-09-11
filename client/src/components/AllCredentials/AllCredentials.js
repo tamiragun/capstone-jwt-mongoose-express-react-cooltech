@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router";
 import { EditCredential } from "../EditCredential/EditCredential";
+import "./AllCredentials.css";
 
 export const AllCredentials = (props) => {
   const [credentials, setCredentials] = useState([]);
@@ -88,6 +89,7 @@ export const AllCredentials = (props) => {
         {displayEdit && (
           <td>
             <button
+              className="button"
               name={credential._id}
               onClick={() => setEditCredential(credential._id)}
             >
@@ -105,19 +107,25 @@ export const AllCredentials = (props) => {
   };
 
   return (
-    <div>
+    <div className="all-credentials">
       {isError ? (
         <div>
           Sorry! There was an eror performing this action:<br></br>
           {isError} <br></br>
           <button
+            className="button nav-button"
             onClick={() => {
               history.goBack();
             }}
           >
             Go back
           </button>
-          <button onClick={() => history.push("/")}>Go home</button>
+          <button
+            className="button nav-button"
+            onClick={() => history.push("/")}
+          >
+            Go home
+          </button>
         </div>
       ) : (
         <div>
@@ -127,32 +135,49 @@ export const AllCredentials = (props) => {
             ) : (
               <div>
                 <h2>All credentials for:</h2>
-                <h3>
-                  Organisational unit: {credentialsToDisplay.org_unit}
-                  <br></br>
-                  Division: {credentialsToDisplay.division}
-                </h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Login</th>
-                      <th>Password</th>
-                      <th>Organisational unit</th>
-                      <th>Division</th>
-                      {displayEdit && <th>Action</th>}
-                    </tr>
-                  </thead>
-                  <tbody>{credentialList}</tbody>
-                </table>
+                <div className="affiliation-button">
+                  <div>
+                    <p>
+                      <strong>Organisational unit: </strong>
+                    </p>
+                    <p>
+                      <strong>Division: </strong>
+                    </p>
+                  </div>
+                  <div>
+                    <p>{credentialsToDisplay.org_unit}</p>
+                    <p>{credentialsToDisplay.division}</p>
+                  </div>
+                </div>
+                <div className="credentials-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Login</th>
+                        <th>Password</th>
+                        <th>Organisational unit</th>
+                        <th>Division</th>
+                        {displayEdit && <th>Action</th>}
+                      </tr>
+                    </thead>
+                    <tbody>{credentialList}</tbody>
+                  </table>
+                </div>
                 <button
+                  className="button nav-button"
                   onClick={() =>
                     history.push("/credentials/add", { credentialsToDisplay })
                   }
                 >
                   Add new credential
                 </button>
-                <button onClick={() => history.push("/")}>Home</button>
+                <button
+                  className="button nav-button"
+                  onClick={() => history.push("/")}
+                >
+                  Home
+                </button>
               </div>
             ))}
           {editCredential && (

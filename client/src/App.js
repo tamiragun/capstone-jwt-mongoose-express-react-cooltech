@@ -3,16 +3,19 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
 import { AllUsers } from "./components/AllUsers/AllUsers";
-import { EditUser } from "./components/EditUser/EditUser";
 import { AllCredentials } from "./components/AllCredentials/AllCredentials";
-import { EditCredential } from "./components/EditCredential/EditCredential";
 import { AddCredential } from "./components/AddCredential/AddCredential";
 import { HomePage } from "./components/HomePage/HomePage";
+import banner from "./assets/banner.jpg";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <img src={banner} alt="Banner" />
+        <h1>Cool Tech</h1>
+      </header>
+      <body>
         <Router>
           <Switch>
             <Route path="/login">
@@ -21,9 +24,6 @@ function App() {
             <Route path="/register">
               <Register />
             </Route>
-            <Route path="/users/edit">
-              <EditUser />
-            </Route>
             <Route path="/users">
               <AllUsers />
             </Route>
@@ -31,14 +31,14 @@ function App() {
               <AddCredential />
             </Route>
             <Route path="/credentials">
-              <AllCredentials org_unit="News management" division="Marketing" />
+              <AllCredentials />
             </Route>
             <Route path="/">
               <HomePage />
             </Route>
           </Switch>
         </Router>
-      </header>
+      </body>
     </div>
   );
 }

@@ -138,7 +138,8 @@ exports.authenticateAdmin = async function (req, res, next) {
 };
 
 exports.checkAffiliation = async function (req, res, next) {
-  // SHOULD I ADD A CHECK IF REQ.AFFILIATION IS SET?
+  // SHOULD I ADD A CHECK IF REQ.AFFILIATION IS SET? YES
+
   const checkAffiliation = req.affiliation.filter((element) => {
     if (JSON.stringify(element) === JSON.stringify(req.body.affiliation)) {
       return element;

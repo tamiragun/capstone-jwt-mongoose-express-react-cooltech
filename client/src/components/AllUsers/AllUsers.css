@@ -1,0 +1,22 @@
+.users-table table {
+  text-align: left;
+  margin: 35px auto;
+  border-collapse: separate;
+  border-spacing: 20px 0;
+  border-radius: 5px;
+  background-color: #103438;
+  padding: 10px;
+}
+
+.users-table td {
+  vertical-align: top;
+}
+
+.users-table tr {
+  padding: 10px 0;
+}
+
+.users-table ul {
+  padding: 0 0 0 20px;
+  margin: 0;
+}

@@ -59,6 +59,7 @@ export const AddCredential = (props) => {
           Sorry! There was an eror performing this action:<br></br>
           {isError} <br></br>
           <button
+            className="button nav-button"
             onClick={() => {
               setIsError(false);
               setSubmitted(false);
@@ -70,9 +71,11 @@ export const AddCredential = (props) => {
       ) : (
         <div>
           {!submitted && (
-            <div className="credential-edit-form">
+            <div>
               <h2>Add new credential</h2>
-              <CredentialForm type="add" formHandler={handleSubmit} />
+              <div className="form-card">
+                <CredentialForm type="add" formHandler={handleSubmit} />
+              </div>
             </div>
           )}
           {submitted && (
@@ -83,11 +86,14 @@ export const AddCredential = (props) => {
         </div>
       )}
       <button
+        className="button nav-button"
         onClick={() => history.push("/credentials", { credentialsToDisplay })}
       >
         Back to credentials
       </button>
-      <button onClick={() => history.push("/")}>Home</button>
+      <button className="button nav-button" onClick={() => history.push("/")}>
+        Home
+      </button>
     </div>
   );
 };

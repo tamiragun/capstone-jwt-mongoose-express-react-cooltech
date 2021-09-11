@@ -160,6 +160,7 @@ export const EditUser = (props) => {
           Sorry! There was an eror performing this action:<br></br>
           {isError} <br></br>
           <button
+            className="button nav-button"
             onClick={() => {
               setIsError(false);
               setSubmitted(false);
@@ -229,20 +230,33 @@ export const EditUser = (props) => {
                     required
                   ></input>
                   <br></br>
-                  <input type="submit" value="Assign"></input>
+                  <input
+                    className="button"
+                    type="submit"
+                    value="Assign"
+                  ></input>
                 </form>
               </div>
             ))}
           {submitted && (
             <div>
               <h2>You succesfully updated the user.</h2>
-              <button onClick={() => setSubmitted(false)}>Keep editing</button>
+              <button className="button" onClick={() => setSubmitted(false)}>
+                Keep editing
+              </button>
             </div>
           )}
         </div>
       )}
-      <button onClick={() => history.push("/users")}>Back to all users</button>
-      <button onClick={() => history.push("/")}>Home</button>
+      <button
+        className="button nav-button"
+        onClick={() => history.push("/users")}
+      >
+        Back to all users
+      </button>
+      <button className="button nav-button" onClick={() => history.push("/")}>
+        Home
+      </button>
     </div>
   );
 };

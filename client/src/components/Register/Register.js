@@ -90,76 +90,83 @@ export const Register = (props) => {
       ) : (
         <div>
           <h2>Register</h2>
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="name">Name:</label>
-            <br></br>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={name}
-              onChange={handleChange}
-              required
-            ></input>
-            <br></br>
+          <div className="form-card">
+            <form onSubmit={handleSubmit}>
+              <div className="form-fields">
+                <label htmlFor="name">Name:</label>
 
-            <label htmlFor="email">Email:</label>
-            <br></br>
-            <input
-              type="text"
-              name="email"
-              id="email"
-              value={email}
-              onChange={handleChange}
-              required
-            ></input>
-            <br></br>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={name}
+                  onChange={handleChange}
+                  required
+                ></input>
 
-            <label htmlFor="password">Password:</label>
-            <br></br>
-            <input
-              type="text"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handleChange}
-              required
-            ></input>
-            <br></br>
+                <label htmlFor="email">Email:</label>
 
-            <label htmlFor="org_unit">Organisational unit:</label>
-            <br></br>
-            <select
-              id="org_unit"
-              name="org_unit"
-              onChange={handleChange}
-              required
-            >
-              <option value="">Please select</option>
-              <option value="News management">News management</option>
-              <option value="Software reviews">Software reviews</option>
-              <option value="Hardware reviews">Hardware reviews</option>
-              <option value="Opinion publishing">Opinion publishing</option>
-            </select>
-            <br></br>
+                <input
+                  type="text"
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={handleChange}
+                  required
+                ></input>
 
-            <label htmlFor="division">Division:</label>
-            <br></br>
-            <input
-              type="text"
-              id="division"
-              name="division"
-              value={division}
-              onChange={handleChange}
-              required
-            ></input>
-            <br></br>
-            <br></br>
+                <label htmlFor="password">Password:</label>
 
-            <input type="submit" value="Register"></input>
-          </form>
+                <input
+                  type="text"
+                  id="password"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
+                  required
+                ></input>
+
+                <label htmlFor="org_unit">Organisational unit:</label>
+
+                <select
+                  id="org_unit"
+                  name="org_unit"
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Please select</option>
+                  <option value="News management">News management</option>
+                  <option value="Software reviews">Software reviews</option>
+                  <option value="Hardware reviews">Hardware reviews</option>
+                  <option value="Opinion publishing">Opinion publishing</option>
+                </select>
+
+                <label htmlFor="division">Division:</label>
+
+                <input
+                  type="text"
+                  id="division"
+                  name="division"
+                  value={division}
+                  onChange={handleChange}
+                  required
+                ></input>
+                <div></div>
+                <input
+                  className="button"
+                  type="submit"
+                  value="Register"
+                ></input>
+              </div>
+            </form>
+          </div>
           <p>Already a user? Log in here:</p>
-          <button onClick={() => history.push("/login")}>Login</button>
+          <button
+            className="button nav-button"
+            onClick={() => history.push("/login")}
+          >
+            Login
+          </button>
         </div>
       )}
     </div>

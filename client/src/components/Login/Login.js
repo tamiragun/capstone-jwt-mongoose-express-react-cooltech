@@ -72,33 +72,42 @@ export const Login = (props) => {
       ) : (
         <div>
           <h2>Log in</h2>
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="email">Email:</label>
-            <br></br>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleChange}
-              required
-            ></input>
-            <br></br>
-            <label htmlFor="password">Password:</label>
-            <br></br>
-            <input
-              type="text"
-              name="password"
-              id="password"
-              value={password}
-              onChange={handleChange}
-              requried
-            ></input>
-            <br></br>
-            <input type="submit" value="Login"></input>
-          </form>
+          <div className="form-card">
+            <form onSubmit={handleSubmit}>
+              <div className="form-fields">
+                <label htmlFor="email">Email:</label>
+
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  value={email}
+                  onChange={handleChange}
+                  required
+                ></input>
+
+                <label htmlFor="password">Password:</label>
+
+                <input
+                  type="text"
+                  name="password"
+                  id="password"
+                  value={password}
+                  onChange={handleChange}
+                  requried
+                ></input>
+                <div></div>
+                <input className="button" type="submit" value="Login"></input>
+              </div>
+            </form>
+          </div>
           <p>Not a user yet? Register here:</p>
-          <button onClick={() => history.push("/register")}>Register</button>
+          <button
+            className="button nav-button"
+            onClick={() => history.push("/register")}
+          >
+            Register
+          </button>
         </div>
       )}
     </div>

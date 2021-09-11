@@ -1,6 +1,7 @@
 // Component that renders a single user, with options to edit fields
 
 import React, { useState, useEffect } from "react";
+import "./CredentialForm.css";
 
 export const CredentialForm = (props) => {
   // Declare states purely to control the form elements.
@@ -79,67 +80,66 @@ export const CredentialForm = (props) => {
     <div className="credential-form">
       <div>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={handleChange}
-          ></input>
-          <br></br>
+          <div className="form-fields">
+            <label htmlFor="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={handleChange}
+            ></input>
 
-          <label htmlFor="login">Login:</label>
-          <input
-            type="text"
-            id="login"
-            name="login"
-            value={login}
-            onChange={handleChange}
-          ></input>
-          <br></br>
+            <label htmlFor="login">Login:</label>
+            <input
+              type="text"
+              id="login"
+              name="login"
+              value={login}
+              onChange={handleChange}
+            ></input>
 
-          <label htmlFor="password">Password:</label>
-          <input
-            type="text"
-            id="password"
-            name="password"
-            value={password}
-            onChange={handleChange}
-          ></input>
-          <br></br>
+            <label htmlFor="password">Password:</label>
+            <input
+              type="text"
+              id="password"
+              name="password"
+              value={password}
+              onChange={handleChange}
+            ></input>
 
-          <label htmlFor="org_unit">Organisational unit:</label>
-          <select id="org_unit" name="org_unit" onChange={handleChange}>
-            <option value="">Please select</option>
-            <option id="news_management" value="News management">
-              News management
-            </option>
-            <option id="software_reviews" value="Software reviews">
-              Software reviews
-            </option>
-            <option id="hardware_reviews" value="Hardware reviews">
-              Hardware reviews
-            </option>
-            <option id="opinion_publishing" value="Opinion publishing">
-              Opinion publishing
-            </option>
-          </select>
-          <br></br>
+            <label htmlFor="org_unit">Organisational unit:</label>
+            <select id="org_unit" name="org_unit" onChange={handleChange}>
+              <option value="">Please select</option>
+              <option id="news_management" value="News management">
+                News management
+              </option>
+              <option id="software_reviews" value="Software reviews">
+                Software reviews
+              </option>
+              <option id="hardware_reviews" value="Hardware reviews">
+                Hardware reviews
+              </option>
+              <option id="opinion_publishing" value="Opinion publishing">
+                Opinion publishing
+              </option>
+            </select>
 
-          <label htmlFor="division">Division:</label>
-          <input
-            type="text"
-            id="division"
-            name="division"
-            value={division}
-            onChange={handleChange}
-          ></input>
-          <br></br>
-          <input
-            type="submit"
-            value={props.type === "add" ? "Add credential" : "Submit edits"}
-          ></input>
+            <label htmlFor="division">Division:</label>
+            <input
+              type="text"
+              id="division"
+              name="division"
+              value={division}
+              onChange={handleChange}
+            ></input>
+            <div></div>
+            <input
+              className="button"
+              type="submit"
+              value={props.type === "add" ? "Add credential" : "Submit edits"}
+            ></input>
+          </div>
         </form>
       </div>
     </div>

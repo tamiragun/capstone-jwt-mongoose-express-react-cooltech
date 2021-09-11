@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { CredentialForm } from "../CredentialForm/CredentialForm";
 import { useHistory } from "react-router-dom";
+import "./EditCredential.css";
 
 export const EditCredential = (props) => {
   // Use history to be able to link to other Routes.
@@ -85,6 +86,7 @@ export const EditCredential = (props) => {
           Sorry! There was an eror performing this action:<br></br>
           {isError} <br></br>
           <button
+            className="button nav-button"
             onClick={() => {
               setIsError(false);
               setSubmitted(false);
@@ -100,17 +102,18 @@ export const EditCredential = (props) => {
               "Loading..."
             ) : (
               <div>
-                <h2>Edit credential:</h2>
-                <h3>{credential.name}</h3>
-                <CredentialForm
-                  type="edit"
-                  formHandler={handleSubmit}
-                  name={credential.name}
-                  login={credential.login}
-                  password={credential.password}
-                  org_unit={credential.org_unit}
-                  division={credential.division}
-                />
+                <h2>Edit credential: {credential.name}</h2>
+                <div className="form-card">
+                  <CredentialForm
+                    type="edit"
+                    formHandler={handleSubmit}
+                    name={credential.name}
+                    login={credential.login}
+                    password={credential.password}
+                    org_unit={credential.org_unit}
+                    division={credential.division}
+                  />
+                </div>
               </div>
             ))}
           {submitted && (
@@ -120,8 +123,12 @@ export const EditCredential = (props) => {
           )}
         </div>
       )}
-      <button onClick={props.returnToCredentials}>Back to credentials</button>
-      <button onClick={() => history.push("/")}>Home</button>
+      <button className="button nav-button" onClick={props.returnToCredentials}>
+        Back to credentials
+      </button>
+      <button className="button nav-button" onClick={() => history.push("/")}>
+        Home
+      </button>
     </div>
   );
 };
