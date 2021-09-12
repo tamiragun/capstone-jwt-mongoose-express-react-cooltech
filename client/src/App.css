@@ -1,3 +1,5 @@
+/* APP-WIDE STYLING */
+
 html {
   background-color: #020300;
   font-family: "Padauk", sans-serif;
@@ -22,6 +24,8 @@ html {
   width: 20vw;
 }
 
+/* BASIC BUTTON STYLING */
+
 .button {
   border-radius: 5px;
   background-color: #e46330;
@@ -34,4 +38,12 @@ html {
 
 .button:hover {
   cursor: pointer;
+}
+
+/* NAV BUTTON STYLING */
+
+.nav-button {
+  width: 200px;
+  font-size: large;
+  margin: 5px 5px;
 }

@@ -16,19 +16,13 @@ let userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  // Affiliation is an array of objects, each of whch have two keys: org_unit
+  // and division.
   affiliation: {
     type: Array,
     required: true,
     default: [],
   },
-  // org_unit: {
-  //   type: Array,
-  //   required: true,
-  // },
-  // division: {
-  //   type: Array,
-  //   required: true,
-  // },
   role: {
     type: String,
     required: false,

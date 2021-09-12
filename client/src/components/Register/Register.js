@@ -6,6 +6,9 @@ import { useHistory } from "react-router-dom";
 export const Register = (props) => {
   // Use history to be able to link to other Routes.
   const history = useHistory();
+
+  // Error toggle to capture any API call failures and display a user-friendly
+  // error message.
   const [isError, setIsError] = useState(false);
 
   // Declare states purely to control the form elements.
@@ -38,7 +41,7 @@ export const Register = (props) => {
     // Prevent the browser from re-loading the page
     event.preventDefault();
 
-    // Call the server with the different states as arguments.
+    // Call the server with the different state hooks in the body.
     const url = "/authentication/register";
     try {
       const response = await fetch(url, {
@@ -53,12 +56,17 @@ export const Register = (props) => {
       });
       const jsonResponse = await response.json();
 
+      // If there has been an error, set the error state hook to the arror
+      // message, which will then be displayed on the page.
       if (jsonResponse.error) {
         console.log(jsonResponse.error);
         setIsError(jsonResponse.message);
+
+        // If instead the token was set successfully, store that in session storage
+        // do that the token can be checked throughout the user's session across the app
       } else if (jsonResponse.token) {
-        //store jwt and user info in sessionStrorage
         sessionStorage.setItem("token", jsonResponse.token);
+
         // Reset the states back to empty, so that the form looks blank again.
         setName("");
         setEmail("");
@@ -81,6 +89,7 @@ export const Register = (props) => {
 
   return (
     <div className="register-form">
+      {/*If there was any kind of error, display only the error message with nav buttons */}
       {isError ? (
         <div>
           Sorry! There was an eror performing this action:<br></br>
@@ -88,6 +97,7 @@ export const Register = (props) => {
           <button onClick={() => setIsError(false)}>Try again</button>
         </div>
       ) : (
+        // Otherwise, display the registration form
         <div>
           <h2>Register</h2>
           <div className="form-card">
@@ -160,6 +170,7 @@ export const Register = (props) => {
               </div>
             </form>
           </div>
+          {/*Allow the user to switch to the login page instead */}
           <p>Already a user? Log in here:</p>
           <button
             className="button nav-button"

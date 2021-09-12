@@ -6,14 +6,23 @@ import { useHistory, useLocation } from "react-router-dom";
 export const EditUser = (props) => {
   // Use history to be able to link to other Routes.
   const history = useHistory();
+  // Use location to be able to obtain the state of the route.
   const location = useLocation();
+  // Obtain the state as was passed along in the route's redirect.
   const { _id } = location.state || {
     _id: {},
   };
+  // The user to display based on the id provided int he route's state
   const [user, setUser] = useState();
-  const [submitted, setSubmitted] = useState(false);
+
+  // Error toggle to capture any API call failures and display a user-friendly
+  // error message.
   const [isError, setIsError] = useState(false);
-  // Declare states purely to control the form elements.
+  // Toggle whether the form has been submitted or not, which influences whether
+  // the form or a success message is displayed.
+  const [submitted, setSubmitted] = useState(false);
+
+  // Some states purely to control the form elements.
   const [org_unit, setOrg_unit] = useState();
   const [division, setDivision] = useState("");
   const [role, setRole] = useState("");
@@ -33,6 +42,7 @@ export const EditUser = (props) => {
 
   // Upon first render, get the users and set the state
   useEffect(() => {
+    // Async IIFE to call the server with the token and the user id, and get the user info
     (async () => {
       setIsError(false);
       try {
@@ -47,10 +57,13 @@ export const EditUser = (props) => {
           body: JSON.stringify({ _id: _id }),
         });
         const jsonResponse = await response.json();
+        // If there has been an error, set the error state hook to the arror
+        // message, which will then be displayed on the page.
         if (jsonResponse.error) {
           console.log(jsonResponse.error);
           setIsError(jsonResponse.message);
         } else {
+          // If successful, update the state hook to contain the user info
           setUser(jsonResponse);
         }
       } catch (error) {
@@ -61,19 +74,22 @@ export const EditUser = (props) => {
   }, [submitted]);
 
   // Handler for when an "assign" form is submitted
-
   const handleAssign = async (event) => {
     setIsError(false);
+    // Prevent the browser from reloading
     event.preventDefault();
-    // Call the server with the id as argument.
+
     const url = "/users/assign";
+    // Obtain the token from session storage and the id from the state
     const token = sessionStorage.getItem("token");
     let requestedFields = { _id: _id };
+    // Add fields to the object based on which "form" was submitted
     if (event.target.name === "affiliation") {
       requestedFields.affiliation = { org_unit: org_unit, division: division };
     } else if (event.target.name === "role") {
       requestedFields.role = role;
     }
+    // Call the server with the final requested fields object in the body
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -84,9 +100,12 @@ export const EditUser = (props) => {
         body: JSON.stringify(requestedFields),
       });
       const jsonResponse = await response.json();
+      // If there has been an error, set the error state hook to the arror
+      // message, which will then be displayed on the page.
       if (jsonResponse.error) {
         console.log(jsonResponse.error);
         setIsError(jsonResponse.message);
+        // If successful, display the success message and reset the form state hooks to blank
       } else {
         setDivision("");
         setOrg_unit(null);
@@ -102,17 +121,20 @@ export const EditUser = (props) => {
 
   const handleUnassign = async (event) => {
     setIsError(false);
+    // Prevent the browser from reloading
     event.preventDefault();
-    // Call the server with the id as argument.
-    const url = "/users/unassign";
-    const token = sessionStorage.getItem("token");
 
+    const url = "/users/unassign";
+    // Obtain the token from session storage
+    const token = sessionStorage.getItem("token");
+    // Obtain the affiliation from the button that was clicked
     const [org, div] = event.target.value.split(",");
+    // Obtain the id from state
     let requestedFields = {
       _id: _id,
       affiliation: { org_unit: org, division: div },
     };
-
+    // Call the server with the final requested fields object in the body
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -123,6 +145,8 @@ export const EditUser = (props) => {
         body: JSON.stringify(requestedFields),
       });
       const jsonResponse = await response.json();
+      // If there has been an error, set the error state hook to the arror
+      // message, which will then be displayed on the page.
       if (jsonResponse.error) {
         console.log(jsonResponse.error);
         setIsError(jsonResponse.message);
@@ -137,13 +161,16 @@ export const EditUser = (props) => {
   };
 
   const affiliations =
+    // First check that the user state has been loaded
     user &&
+    // Create a list of affiliations for the user, each with a button to unassign the affiliation
     user.affiliation.map((affiliation, i) => {
       return (
         <li key={"affiliation_" + i}>
           {`${affiliation.org_unit}, ${affiliation.division}`}
           <button
             name="affiliation"
+            // Set the button value to the affiliation so that upon submit it can be known which affiliation to unassign
             value={`${affiliation.org_unit},${affiliation.division}`}
             onClick={handleUnassign}
           >
@@ -155,6 +182,7 @@ export const EditUser = (props) => {
 
   return (
     <div className="user-edit-form">
+      {/*If there was any kind of error, display only the error message with nav buttons */}
       {isError ? (
         <div>
           Sorry! There was an eror performing this action:<br></br>
@@ -171,7 +199,9 @@ export const EditUser = (props) => {
         </div>
       ) : (
         <div>
+          {/*If the submitted toggle is off, then display the user to edit. */}
           {!submitted &&
+            /*If the user hasn't updated yet, display a holding message. */
             (!user ? (
               "Loading..."
             ) : (
@@ -238,6 +268,7 @@ export const EditUser = (props) => {
                 </form>
               </div>
             ))}
+          {/*If the submit toggle is on, then display the user edit form. */}
           {submitted && (
             <div>
               <h2>You succesfully updated the user.</h2>

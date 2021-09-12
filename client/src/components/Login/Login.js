@@ -6,6 +6,9 @@ import { useHistory } from "react-router-dom";
 export const Login = (props) => {
   // Use history to be able to link to other Routes.
   const history = useHistory();
+
+  // Error toggle to capture any API call failures and display a user-friendly
+  // error message.
   const [isError, setIsError] = useState(false);
 
   // Declare states purely to control the form elements.
@@ -40,12 +43,17 @@ export const Login = (props) => {
       });
       const jsonResponse = await response.json();
 
+      // If there has been an error, set the error state hook to the arror
+      // message, which will then be displayed on the page.
       if (jsonResponse.error) {
         console.log(jsonResponse.error);
         setIsError(jsonResponse.message);
+
+        // If instead the token was set successfully, store that in session storage
+        // do that the token can be checked throughout the user's session across the app
       } else if (jsonResponse.token) {
-        //store jwt and user info in sessionStrorage
         sessionStorage.setItem("token", jsonResponse.token);
+
         // Reset the states back to empty, so that the form looks blank again.
         setEmail("");
         setPassword("");
@@ -63,6 +71,7 @@ export const Login = (props) => {
 
   return (
     <div className="login-form">
+      {/*If there was any kind of error, display only the error message with nav buttons */}
       {isError ? (
         <div>
           Sorry! There was an eror performing this action:<br></br>
@@ -70,6 +79,7 @@ export const Login = (props) => {
           <button onClick={() => setIsError(false)}>Try again</button>
         </div>
       ) : (
+        // Otherwise, display the login form
         <div>
           <h2>Log in</h2>
           <div className="form-card">
@@ -101,6 +111,7 @@ export const Login = (props) => {
               </div>
             </form>
           </div>
+          {/*Allow the user to switch to the registration page instead */}
           <p>Not a user yet? Register here:</p>
           <button
             className="button nav-button"

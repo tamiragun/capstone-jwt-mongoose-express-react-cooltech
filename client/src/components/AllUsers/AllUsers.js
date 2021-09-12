@@ -5,13 +5,19 @@ import { useHistory } from "react-router";
 import "./AllUsers.css";
 
 export const AllUsers = (props) => {
-  const [users, setUsers] = useState([]);
+  // Use history to be able to link to other Routes.
   const history = useHistory();
+  // Error toggle to capture any API call failures and display a user-friendly
+  // error message.
   const [isError, setIsError] = useState(false);
+
+  // The array of users to display
+  const [users, setUsers] = useState([]);
 
   // Upon first render, get the users and set the state
   useEffect(() => {
     setIsError(false);
+    // Async IIFE to call the server with the token:
     (async () => {
       try {
         const token = sessionStorage.getItem("token");
@@ -25,10 +31,13 @@ export const AllUsers = (props) => {
           body: null,
         });
         const jsonResponse = await response.json();
+        // If there has been an error, set the error state hook to the arror
+        // message, which will then be displayed on the page.
         if (jsonResponse.error) {
           console.log(jsonResponse.error);
           setIsError(jsonResponse.message);
         } else {
+          // If successful, store the list of users in the component's state hook
           setUsers(jsonResponse);
         }
       } catch (error) {
@@ -38,7 +47,9 @@ export const AllUsers = (props) => {
     })();
   }, []);
 
+  // Once users are set by the useEfect hook, generate a JSX list of those users with an "edit" button each.
   const userList = users.map((user) => {
+    // Within each user, generate a list of all their affiliations
     const affiliation_list = user.affiliation.map((affiliation, i) => (
       <li key={"affiliation_" + i}>
         <div>
@@ -51,6 +62,7 @@ export const AllUsers = (props) => {
         </div>
       </li>
     ));
+
     return (
       <tr key={user._id}>
         <td>{user.name}</td>
@@ -75,6 +87,7 @@ export const AllUsers = (props) => {
   return (
     <div>
       <h2>All Cool Tech employees</h2>
+      {/*If there was any kind of error, display only the error message with nav buttons */}
       {isError ? (
         <div>
           Sorry! There was an eror performing this action:<br></br>
@@ -90,6 +103,7 @@ export const AllUsers = (props) => {
         </div>
       ) : (
         <div>
+          {/*If the users haven't updated yet, display a holding message. */}
           {!users ? (
             "loading..."
           ) : (

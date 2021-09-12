@@ -1,3 +1,5 @@
+// Route with all the endpoints for authenticatin actions
+
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const userControllers = require("../controllers/Users.controller");
@@ -5,8 +7,9 @@ const auth = require("../middleware/authenticationMiddleware");
 
 const router = express.Router();
 
-// Endpoint for users to login
-
+// Endpoint for users to login. Access is for all roles. Requires
+// body parameters for the email and password. If the user exists
+// and the password matches, a token is generated and returned.
 router.post("/login", userControllers.findUser, (req, res) => {
   const password = req.body.password;
   const user = req.user;
@@ -30,8 +33,9 @@ router.post("/login", userControllers.findUser, (req, res) => {
   }
 });
 
-// Endpoint for users to register
-
+// Endpoint for users to login. Access is for all roles. Requires
+// body parameters for the user info. If the user is generated successfully,
+// a token is generated and returned.
 router.post("/register", userControllers.addUser, (req, res) => {
   // TODO ADD VALIDATION IF EMAIL ALREADY EXISTS OR IF NOT ALL FIELDS ARE ENTERED
   const user = req.user;
@@ -47,8 +51,11 @@ router.post("/register", userControllers.addUser, (req, res) => {
   res.send({ token: token, message: "Registered successfully" });
 });
 
+// Endpoint to check which affiliations to display on the logged in
+// user's homepage. Access is for all roles. Requires athentication
+// header to be set. Returns the role and affiliation based on the token.
 router.post("/home", auth.authenticateNormal, (req, res) => {
-  // meniton why you used a try / catch block here (ie because rol and affiliation could be absent)
+  // Used a try / catch block here because role and affiliation could be absent.
   try {
     console.log(
       "Successfully returned role: ",
@@ -67,4 +74,5 @@ router.post("/home", auth.authenticateNormal, (req, res) => {
   }
 });
 
+// Export the router, will be imported in app.js with all the other routes.
 module.exports = router;

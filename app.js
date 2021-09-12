@@ -1,4 +1,4 @@
-// The server with all the endpoints and middleware
+// The server with all the endpoints and database connection
 
 const express = require("express");
 const path = require("path");
@@ -9,12 +9,12 @@ require("dotenv").config();
 
 const app = express();
 
-//Middelware to help with parsing, logging, security
+// Middelware to help with parsing, logging, security
 app.use(express.json());
 app.use(logger("dev"));
 app.use(helmet());
 
-//Disable CORS
+// Disable CORS
 app.use((req, res, next) => {
   res.header({ "Access-Control-Allow-Origin": "*" });
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 });
 
 //Routes
-
 const userRouter = require("./routes/users");
 app.use("/users", userRouter);
 

@@ -1,3 +1,5 @@
+// The main component for the front-end, exported to index.js
+
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Login } from "./components/Login/Login";
@@ -11,11 +13,13 @@ import banner from "./assets/banner.jpg";
 function App() {
   return (
     <div className="App">
+      {/*Header that applies across all routes */}
       <header className="App-header">
         <img src={banner} alt="Banner" />
         <h1>Cool Tech</h1>
       </header>
       <body>
+        {/*Routes depending on the url path */}
         <Router>
           <Switch>
             <Route path="/login">

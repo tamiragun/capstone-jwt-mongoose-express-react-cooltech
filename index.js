@@ -1,5 +1,6 @@
 // The main entry point, that fires up the server
 
+// require app, where all the endpoints are
 var app = require("./app");
 const port = process.env.PORT || 3001;
 
