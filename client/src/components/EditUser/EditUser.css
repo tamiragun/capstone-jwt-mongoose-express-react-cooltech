@@ -1,0 +1,35 @@
+.test {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 5px 15px;
+  margin: 10px auto;
+
+  text-align: left;
+  border-radius: 5px;
+  background-color: #103438;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.test label {
+  text-align: right;
+}
+
+.test ul {
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+
+.test li {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.unassign-button {
+  margin-left: 20px;
+}
+
+.test2 {
+  display: inline-block;
+}

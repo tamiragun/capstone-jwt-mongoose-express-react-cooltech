@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import "./EditUser.css";
 
 export const EditUser = (props) => {
   // Use history to be able to link to other Routes.
@@ -167,8 +168,9 @@ export const EditUser = (props) => {
     user.affiliation.map((affiliation, i) => {
       return (
         <li key={"affiliation_" + i}>
-          {`${affiliation.org_unit}, ${affiliation.division}`}
+          <div>{`${affiliation.org_unit}, ${affiliation.division}`}</div>
           <button
+            className="button unassign-button"
             name="affiliation"
             // Set the button value to the affiliation so that upon submit it can be known which affiliation to unassign
             value={`${affiliation.org_unit},${affiliation.division}`}
@@ -207,65 +209,85 @@ export const EditUser = (props) => {
             ) : (
               <div>
                 <h2>Edit user: {user.name}</h2>
-                <p>Name: {user.name}</p>
-                <p>Email: {user.email}</p>
-                <p>Role: {user.role}</p>
-                <form name="role" onSubmit={handleAssign}>
-                  <label htmlFor="role">Change role to:</label>
-                  <br></br>
-                  <select
-                    id="role"
-                    name="role"
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Please select</option>
-                    <option value="normal">Normal</option>
-                    <option value="manager">Manager</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <input type="submit" value="Change role"></input>
-                </form>
-                <p>
-                  Affiliation: <ul>{affiliations}</ul>
-                </p>
-                <form name="affiliation" onSubmit={handleAssign}>
-                  <label htmlFor="org_unit">
-                    Assign new organisational unit:
-                  </label>
+                <div className="test2">
+                  <div className="test">
+                    <div>Name: </div>
+                    <div>{user.name}</div>
+                    <div>Email: </div>
+                    <div>{user.email}</div>
+                    <div>Role: </div>
+                    <div>{user.role}</div>
+                    <div></div>
+                    <form name="role" onSubmit={handleAssign}>
+                      <label htmlFor="role">
+                        <strong>Change role to:</strong>
+                      </label>
+                      <br></br>
+                      <select
+                        id="role"
+                        name="role"
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Please select</option>
+                        <option value="normal">Normal</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                      <br></br>
+                      <input
+                        className="button"
+                        type="submit"
+                        value="Change role"
+                      ></input>
+                    </form>
+                    <div>Affiliations:</div>
+                    <ul>{affiliations}</ul>
+                    <div></div>
+                    <form name="affiliation" onSubmit={handleAssign}>
+                      <div>
+                        <strong>Assign new affiliation:</strong>
+                      </div>
+                      <label htmlFor="org_unit">Org unit:</label>
 
-                  <select
-                    id="org_unit"
-                    name="org_unit"
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Please select</option>
-                    <option value="News management">News management</option>
-                    <option value="Software reviews">Software reviews</option>
-                    <option value="Hardware reviews">Hardware reviews</option>
-                    <option value="Opinion publishing">
-                      Opinion publishing
-                    </option>
-                  </select>
-                  <br></br>
-                  <label htmlFor="division">Assign new division:</label>
+                      <select
+                        id="org_unit"
+                        name="org_unit"
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Please select</option>
+                        <option value="News management">News management</option>
+                        <option value="Software reviews">
+                          Software reviews
+                        </option>
+                        <option value="Hardware reviews">
+                          Hardware reviews
+                        </option>
+                        <option value="Opinion publishing">
+                          Opinion publishing
+                        </option>
+                      </select>
+                      <br></br>
+                      <label htmlFor="division">Division:</label>
 
-                  <input
-                    type="text"
-                    id="division"
-                    name="division"
-                    value={division}
-                    onChange={handleChange}
-                    required
-                  ></input>
-                  <br></br>
-                  <input
-                    className="button"
-                    type="submit"
-                    value="Assign"
-                  ></input>
-                </form>
+                      <input
+                        type="text"
+                        id="division"
+                        name="division"
+                        value={division}
+                        onChange={handleChange}
+                        required
+                      ></input>
+                      <br></br>
+                      <input
+                        className="button"
+                        type="submit"
+                        value="Assign"
+                      ></input>
+                    </form>
+                  </div>
+                </div>
               </div>
             ))}
           {/*If the submit toggle is on, then display the user edit form. */}

@@ -8,6 +8,7 @@ import { AllUsers } from "./components/AllUsers/AllUsers";
 import { AllCredentials } from "./components/AllCredentials/AllCredentials";
 import { AddCredential } from "./components/AddCredential/AddCredential";
 import { HomePage } from "./components/HomePage/HomePage";
+import { EditUser } from "./components/EditUser/EditUser";
 import banner from "./assets/banner.jpg";
 
 function App() {
@@ -27,6 +28,9 @@ function App() {
             </Route>
             <Route path="/register">
               <Register />
+            </Route>
+            <Route path="/users/edit">
+              <EditUser />
             </Route>
             <Route path="/users">
               <AllUsers />

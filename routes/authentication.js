@@ -21,7 +21,7 @@ router.post("/login", userControllers.findUser, (req, res) => {
       role: user.role,
     };
 
-    const token = jwt.sign(JSON.stringify(payload), "jwt-secret", {
+    const token = jwt.sign(JSON.stringify(payload), process.env.JWT_KEY, {
       algorithm: "HS256",
     });
     res.send({ token: token, message: "Logged in successfully" });
@@ -45,7 +45,7 @@ router.post("/register", userControllers.addUser, (req, res) => {
     role: user.role,
   };
 
-  const token = jwt.sign(JSON.stringify(payload), "jwt-secret", {
+  const token = jwt.sign(JSON.stringify(payload), process.env.JWT_KEY, {
     algorithm: "HS256",
   });
   res.send({ token: token, message: "Registered successfully" });

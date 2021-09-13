@@ -87,7 +87,7 @@ exports.authenticateManager = async function (req, res, next) {
   const auth = req.headers["authorization"];
   const token = auth.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, "jwt-secret");
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
 
     // Check for the "role" property on the token payload
     if (decoded.role === "manager" || decoded.role === "admin") {
@@ -146,7 +146,7 @@ exports.authenticateAdmin = async function (req, res, next) {
   const auth = req.headers["authorization"];
   const token = auth.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, "jwt-secret");
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
 
     // Check for the "role" property on the token payload
     if (decoded.role === "admin") {

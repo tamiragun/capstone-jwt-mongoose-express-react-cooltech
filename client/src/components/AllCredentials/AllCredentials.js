@@ -157,60 +157,57 @@ export const AllCredentials = (props) => {
         <div>
           {/*If the edit credentialtoggle is off, then display the list of credentials. */}
           {!editCredential &&
-            {
-              /*If the credentials haven't updated yet, display a holding message. */
-            }(
-              !credentials ? (
-                "loading..."
-              ) : (
-                <div>
-                  <h2>All credentials for:</h2>
-                  <div className="affiliation-button">
-                    <div>
-                      <p>
-                        <strong>Organisational unit: </strong>
-                      </p>
-                      <p>
-                        <strong>Division: </strong>
-                      </p>
-                    </div>
-                    <div>
-                      <p>{credentialsToDisplay.org_unit}</p>
-                      <p>{credentialsToDisplay.division}</p>
-                    </div>
+            /*If the credentials haven't updated yet, display a holding message. */
+            (!credentials ? (
+              "loading..."
+            ) : (
+              <div>
+                <h2>All credentials for:</h2>
+                <div className="affiliation-button">
+                  <div>
+                    <p>
+                      <strong>Organisational unit: </strong>
+                    </p>
+                    <p>
+                      <strong>Division: </strong>
+                    </p>
                   </div>
-                  <div className="credentials-table">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Login</th>
-                          <th>Password</th>
-                          <th>Organisational unit</th>
-                          <th>Division</th>
-                          {displayEdit && <th>Action</th>}
-                        </tr>
-                      </thead>
-                      <tbody>{credentialList}</tbody>
-                    </table>
+                  <div>
+                    <p>{credentialsToDisplay.org_unit}</p>
+                    <p>{credentialsToDisplay.division}</p>
                   </div>
-                  <button
-                    className="button nav-button"
-                    onClick={() =>
-                      history.push("/credentials/add", { credentialsToDisplay })
-                    }
-                  >
-                    Add new credential
-                  </button>
-                  <button
-                    className="button nav-button"
-                    onClick={() => history.push("/")}
-                  >
-                    Home
-                  </button>
                 </div>
-              )
-            )}
+                <div className="credentials-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Login</th>
+                        <th>Password</th>
+                        <th>Organisational unit</th>
+                        <th>Division</th>
+                        {displayEdit && <th>Action</th>}
+                      </tr>
+                    </thead>
+                    <tbody>{credentialList}</tbody>
+                  </table>
+                </div>
+                <button
+                  className="button nav-button"
+                  onClick={() =>
+                    history.push("/credentials/add", { credentialsToDisplay })
+                  }
+                >
+                  Add new credential
+                </button>
+                <button
+                  className="button nav-button"
+                  onClick={() => history.push("/")}
+                >
+                  Home
+                </button>
+              </div>
+            ))}
           {/*If the edit credentialtoggle is on, then display the credential edit form. */}
           {editCredential && (
             <EditCredential

@@ -53,7 +53,7 @@ router.post(
 // Returns an object with property "access" set to true.
 router.post(
   "/updatePermission",
-  auth.authenticateManager,
+  auth.authenticateNormal,
   auth.checkEditPermission
 );
 
