@@ -183,7 +183,7 @@ export const EditUser = (props) => {
     });
 
   return (
-    <div className="user-edit-form">
+    <div>
       {/*If there was any kind of error, display only the error message with nav buttons */}
       {isError ? (
         <div>
@@ -209,8 +209,8 @@ export const EditUser = (props) => {
             ) : (
               <div>
                 <h2>Edit user: {user.name}</h2>
-                <div className="test2">
-                  <div className="test">
+                <div className="edit-user-container">
+                  <div className="edit-user-form">
                     <div>Name: </div>
                     <div>{user.name}</div>
                     <div>Email: </div>

@@ -1,4 +1,4 @@
-.test {
+.edit-user-form {
   display: grid;
   grid-template-columns: max-content max-content;
   grid-gap: 5px 15px;
@@ -10,17 +10,17 @@
   padding: 20px;
   box-sizing: border-box;
 }
-.test label {
+.edit-user-form label {
   text-align: right;
 }
 
-.test ul {
+.edit-user-form ul {
   padding: 0;
   list-style: none;
   margin: 0;
 }
 
-.test li {
+.edit-user-form li {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -30,6 +30,6 @@
   margin-left: 20px;
 }
 
-.test2 {
+.edit-user-container {
   display: inline-block;
 }
